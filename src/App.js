@@ -1,5 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
+import { ResizeParent } from "./resizePanel";
 
 function App() {
   return (
@@ -18,6 +19,11 @@ function App() {
           Learn React
         </a>
       </header>
+      <ResizeParent className='cter'>
+        <div className='panel p1'>p1</div>
+        <div className='panel p2'>p2</div>
+        <div className='panel p3'>p3</div>
+      </ResizeParent>
     </div>
   );
 }
