@@ -1,20 +1,5 @@
 import React, { useEffect, useRef } from 'react';
 
-export function withResize($parent, Com) {
-    function setToggleRef($tar) {
-        if ($tar instanceof HTMLElement) {
-            console.log('setToggle', $tar);
-        }
-    }
-    return $parent instanceof HTMLElement && function ResizeWrap(props) {
-        useEffect(() => {
-            if ($parent instanceof HTMLElement) {
-                console.log('ee', $parent);
-            }
-        }, []);
-        return <><Com {...props} /><div ref={setToggleRef} >&nbsp;</div></>;
-    };
-}
 
 /**
  * @typedef TResizeParentArgs
@@ -23,10 +8,11 @@ export function withResize($parent, Com) {
  * @property {React.ReactNode[]} children
  */
 /**
+ * 水平调整宽度
  * @component
  * @param {TResizeParentArgs} props
  */
-export function ResizeParent({ nodeName, vars, children, ...rest }) {
+ export function HorizontalResizeParent({ nodeName, vars, children, ...rest }) {
     const refs = {
         $: useRef(null),
         $toggle: useRef(null),

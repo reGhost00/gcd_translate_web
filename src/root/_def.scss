@@ -1,0 +1,6 @@
+@import "../ext";
+@import "../var";
+
+$top_height: 5rem;
+
+$body_height: calc(100vh - $top_height);
