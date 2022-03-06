@@ -1,10 +1,6 @@
-import React from "react";
-import Header from "./header";
-import Body from "./body";
+import Body from "./body"
+import Top from "./top"
 
 export default function Root() {
-    return <>
-    <Header />
-    <Body />
-    </>;
+    return <><Top/><Body/></>;
 }

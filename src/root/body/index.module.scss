@@ -1,6 +1,5 @@
-@import "./var";
-@import "../def";
+@import "./def";
 
 .body {
-    height:     $root_body_height;
+    height: $body_height;
 }

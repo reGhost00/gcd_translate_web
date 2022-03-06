@@ -1,3 +1,5 @@
+@import "./var";
+
 @mixin wh($w:100%, $h:$w){
     width:  $w;
     height: $h;
@@ -13,7 +15,7 @@
     line-height:$lh;
 }
 
-@mixin cc($c, $bgc){
+@mixin cc($c:$normal_color, $bgc:$normal_bgc){
     color:  $c;
     background-color:$bgc;
 }
