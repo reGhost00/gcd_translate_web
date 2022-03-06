@@ -1,0 +1,15 @@
+@import "./var";
+@import "../def";
+
+.header {
+    @extend .AIC;
+    height:     $root_header_height;
+    padding:    $header_padding;
+    background-color: $header_bgc;
+    position:   relative;
+}
+
+.header_title {
+    font-size:  $header_title_fsz;
+    letter-spacing: $header_title_ls;
+}

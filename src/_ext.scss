@@ -1,0 +1,32 @@
+@mixin wh($w:100%, $h:$w){
+    width:  $w;
+    height: $h;
+}
+
+@mixin whh($w:100%, $h:1em, $lh:1){
+    @include wh($w, $h);
+    line-height: $lh;
+}
+
+@mixin hh($h:1em, $lh:$h){
+    height:     $h;
+    line-height:$lh;
+}
+
+@mixin cc($c, $bgc){
+    color:  $c;
+    background-color:$bgc;
+}
+
+@mixin mp($m:0, $p:0){
+    margin: $m;
+    padding:$p;
+}
+
+@mixin p($t:0, $r:0, $b:$t, $l:$r, $p:absolute){
+    position: $p;
+    top:    $t;
+    right:  $r;
+    bottom: $b;
+    left:   $l;
+}
