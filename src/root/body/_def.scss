@@ -1,1 +1,47 @@
 @import "../def";
+
+$tree_width: 21rem;
+$tree_min_width: 17rem;
+$tree_max_width: 29rem;
+$tree_bgc:  darken($normal_bgc, 3%);
+
+$resize_toggle_width: 3px;
+$resize_toggle_bgc: darken($tree_bgc, 3%);
+$resize_toggle_bgc_hover: darken($resize_toggle_bgc, 3%);
+$resize_toggle_bgc_active: #559;
+
+$sub_header_height: 3rem;
+$sub_body_height: calc($body_height - $sub_header_height);
+
+$icon_fsz: 15px;
+$icon_color: #999;
+$icon_color_hover: #77b;
+$icon_bgc_hover: #ccc;
+
+$headerMenu_icon_wh: 2em;
+
+$itemAction_icon_wh: 1.5em;
+
+
+.sub_header {
+    @extend .AIC;
+    height: $sub_header_height;
+}
+
+.sub_body {
+    height: $sub_body_height;
+}
+
+.icon {
+    font-size: $icon_fsz;
+    color: $icon_color;
+    transition: all linear 100ms;
+    &:hover {
+        @include cc($icon_color_hover, $icon_bgc_hover);
+    }
+}
+
+.headerMenu_icon {
+    @extend .icon;
+    @include wh($headerMenu_icon_wh);
+}

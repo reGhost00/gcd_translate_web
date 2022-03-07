@@ -1,5 +1,15 @@
-@import "../def";
+@import "./def";
 
 .top {
+    @extend .AIC;
+    position: relative;
     height: $top_height;
+    background-color: $top_bgc;
+}
+
+.top_title {
+    padding: $top_title_padding;
+    font-size: $top_title_fsz;
+    letter-spacing: $top_title_ls;
+    text-shadow: $top_title_txsd;
 }

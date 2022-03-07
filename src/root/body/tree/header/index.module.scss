@@ -1,0 +1,6 @@
+@import "../def";
+
+.header {
+    @extend .sub_header;
+    background-color: $treeHeader_bgc;
+}

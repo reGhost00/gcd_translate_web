@@ -1,10 +1,11 @@
-import React, { useEffect, useRef } from 'react';
-
+import React, { useRef } from "react";
+import styles from "./index.module.scss"
 
 /**
  * @typedef TResizeParentArgs
  * @property {string} nodeName 父元素
  * @property {string[]} vars css变量
+ * @property {string} toggleClass toggle样式
  * @property {React.ReactNode[]} children
  */
 /**
@@ -12,17 +13,19 @@ import React, { useEffect, useRef } from 'react';
  * @component
  * @param {TResizeParentArgs} props
  */
- export function HorizontalResizeParent({ nodeName, vars, children, ...rest }) {
+ export function HorizontalResizeParent({ nodeName, vars, toggleClassName, children, ...rest }) {
     const refs = {
         $: useRef(null),
         $toggle: useRef(null),
         $target: useRef(null),
         prevSize: useRef(null),
+        toggleCSS: useRef(null)
     }
     if (children?.length) {
+        refs.toggleCSS.current = toggleClassName || styles.resize_toggle_horizontal;
         const $childrenWithToggle = Array.isArray(vars)
-            ? vars.reduce((prev, curr, idx) => [...prev, children[idx], <div key={curr} data-resize-name={curr} className="resizeToggle" />], []).concat(children.slice(vars.length))
-            : children.reduce((prev, curr, idx) => [...prev, curr, <div key={idx} data-resize-name={`--RESIZE_IDX${idx}_WIDTH`} className="resizeToggle" />], []);
+            ? vars.reduce((prev, curr, idx) => [...prev, children[idx], <div key={curr} data-resize-name={curr} className={refs.toggleCSS.current} />], []).concat(children.slice(vars.length))
+            : children.reduce((prev, curr, idx) => [...prev, curr, <div key={idx} data-resize-name={`--RESIZE_IDX${idx}_WIDTH`} className={refs.toggleCSS.current} />], []);
         function onResizeEnd() {
             refs.$.current.removeEventListener("mousemove", onResizing);
             refs.$target.current?.classList.remove("resizing");
@@ -46,7 +49,7 @@ import React, { useEffect, useRef } from 'react';
         rest.ref = refs.$;
         rest.onMouseDown = function onResizeStart(ev) {
             refs.$toggle.current = ev.target;
-            if (refs.$toggle.current.classList.contains("resizeToggle")) {
+            if (refs.$toggle.current.classList.contains(refs.toggleCSS.current)) {
                 refs.$target.current = refs.$toggle.current.previousElementSibling;
                 refs.prevSize.current = { x: ev.clientX, width: refs.$target.current.clientWidth };
                 refs.$target.current.classList.add("resizing");

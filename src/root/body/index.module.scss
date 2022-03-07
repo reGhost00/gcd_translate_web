@@ -1,5 +1,21 @@
 @import "./def";
 
 .body {
+    --TREE_WIDTH: #{$tree_width};
+    --LIST_WIDTH: calc(100vw - var(--TREE_WIDTH) - #{$resize_toggle_width});
+    display: flex;
     height: $body_height;
+}
+
+.resize_toggle {
+    cursor: w-resize;
+    flex: none;
+    width: $resize_toggle_width;
+    background-color: $resize_toggle_bgc;
+    &:hover {
+        background-color: $resize_toggle_bgc_hover;
+    }
+    &:global(.active) {
+        background-color: $resize_toggle_bgc_active;
+    }
 }

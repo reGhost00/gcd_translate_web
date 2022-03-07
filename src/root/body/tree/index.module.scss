@@ -1,0 +1,7 @@
+@import "./def";
+
+.tree {
+    flex: none;
+    width: clamp($tree_min_width, var(--TREE_WIDTH), $tree_max_width);
+    background-color: $tree_bgc;
+}

@@ -1,0 +1,8 @@
+@import "./def";
+
+.list {
+    --LIST_MIN_WIDTH: calc(100vw - #{$tree_max_width} - #{$resize_toggle_width});
+    --LIST_MAX_WIDTH: calc(100vw - #{$tree_min_width} - #{$resize_toggle_width});
+    flex: none;
+    width: clamp(var(--LIST_MIN_WIDTH), var(--LIST_WIDTH), var(--LIST_MAX_WIDTH));
+}

@@ -1,0 +1,6 @@
+@import "../def";
+
+.body {
+    @extend .sub_body;
+    overflow: hidden auto;
+}

@@ -1,6 +1,11 @@
 @import "../ext";
 @import "../var";
 
-$top_height: 5rem;
+.AIC {
+    display: flex;
+    align-items: center;
+}
 
-$body_height: calc(100vh - $top_height);
+$top_height: 6rem;
+
+$body_height: calc(100vh - #{$top_height});
