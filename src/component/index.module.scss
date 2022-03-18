@@ -2,10 +2,38 @@
 @import "../ext";
 
 $resize_toggle_horizontal_width: 3px;
-$resize_toggle_horizontal_bgc: darken($normal_bgc, 3%);
-$resize_toggle_horizontal_bgc_hover: darken($resize_toggle_horizontal_bgc, 3%);;
+$resize_toggle_horizontal_bgc:          darken($normal_bgc, 3%);
+$resize_toggle_horizontal_bgc_hover:    darken($resize_toggle_horizontal_bgc, 3%);;
 $resize_toggle_horizontal_bgc_active: #559;
-
+//
+// message
+// message other
+$message_padding:   10px;
+$message_bdrs:      3px;
+// normal
+$message_normal_bgc:    #eee;
+$message_normal_bxsd:   0 0 $message_bdrs $message_normal_bgc;
+$message_normal_border: 1px solid darken($message_normal_bgc, 10%);
+// info
+$message_info_bgc:      #ddf;
+$message_info_icon_color:#339;
+$message_info_bxsd:     0 0 $message_bdrs $message_info_bgc;
+$message_info_border:   1px solid darken($message_info_bgc, 10%);
+// succ
+$message_succ_bgc:  #dfd;
+$message_succ_icon_color: #393;
+$message_succ_bxsd:     0 0 $message_bdrs $message_succ_bgc;
+$message_succ_border:   1px solid darken($message_succ_bgc, 10%);
+// warn
+$message_warn_bgc: #fed;
+$message_warn_icon_color: #950;
+$message_warn_bxsd: 0 0 $message_bdrs $message_warn_bgc;
+$message_warn_border: 1px solid darken($message_warn_bgc, 10%);
+// err
+$message_err_bgc: #fdd;
+$message_err_icon_color: #933;
+$message_err_bxsd: 0 0 $message_bdrs $message_err_bgc;
+$message_err_border: 1px solid darken($message_err_bgc, 10%);
 .resize_toggle_horizontal {
     @include wh($resize_toggle_horizontal_width, 100%);
     cursor: w-resize;
@@ -27,5 +55,80 @@ $resize_toggle_horizontal_bgc_active: #559;
         @include wh(1em);
         fill: currentColor;
         pointer-events: none;
+    }
+}
+
+@keyframes normal_dropdown {
+    from {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: none;
+        opacity: 1;
+    }
+}
+
+.normalDiaContainer {
+    position: fixed;
+    top: 0;
+    z-index: 9999;
+    width: 100vw;
+    max-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    pointer-events: none;
+}
+
+.thisMessageContainer {
+    padding: $message_padding;
+    overflow: hidden;
+}
+
+.dias_normalMessage {
+    display: flex;
+    align-items: center;
+    padding: $message_padding;
+    box-shadow: $message_normal_bxsd;
+    border-radius: $message_bdrs;
+    background-color: $message_normal_bgc;
+    border: $message_normal_border;
+    animation: 333ms normal_dropdown;
+    .icon {
+        font-size: 16px;
+        margin-right: 5px;
+    }
+    &.info {
+        background-color: $message_info_bgc;
+        box-shadow: $message_info_bxsd;
+        border: $message_info_border;
+        .icon {
+            color: $message_info_icon_color;
+        }
+    }
+    &.succ {
+        background-color: $message_succ_bgc;
+        box-shadow: $message_succ_bxsd;
+        border: $message_succ_border;
+        .icon {
+            color: $message_succ_icon_color;
+        }
+    }
+    &.warn {
+        background-color: $message_warn_bgc;
+        box-shadow: $message_warn_bxsd;
+        border: $message_warn_border;
+        .icon {
+            color: $message_warn_icon_color;
+        }
+    }
+    &.error {
+        background-color: $message_err_bgc;
+        box-shadow: $message_err_bxsd;
+        border: $message_err_border;
+        .icon {
+            color: $message_err_icon_color;
+        }
     }
 }

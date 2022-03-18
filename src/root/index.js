@@ -1,6 +1,6 @@
 import Body from "./body"
 import Top from "./top"
-import { NetworkAdapter } from "./data-adapter";
+import { NetworkAdapter } from "./network-adapter";
 export default function Root() {
     return <NetworkAdapter>
         <Top/>

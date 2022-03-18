@@ -1,5 +1,7 @@
 import React, { useEffect } from "react";
+import { message } from "component/dias";
 import { noThrowWrap, fetchDataReceiver, isNotNullArray } from "utils/c";
+import { hookGetState, hookSetState } from "utils/r";
 
 /**
  * gcd 返回文件列表项
@@ -16,14 +18,6 @@ import { noThrowWrap, fetchDataReceiver, isNotNullArray } from "utils/c";
  * @property {number} size 文件大小
  * @property {TTreeItem[]} children 子目录
  */
-/**
- * 文件项索引
- * @typedef TFileKVs
- * 
- */
-
-export const Context = React.createContext({});
-
 const network = {
     /** 获取文件列表
      * @param {string} path 路径
@@ -33,13 +27,7 @@ const network = {
         /** @type {[null | Error, TGCDFileItem[]]} */
         const [err, rev] = await noThrowWrap(fetchDataReceiver(fetch(`/list?path=${path}`)));
         if (err)
-            alert(`请求列表失败 ${err}`);
-        // else if (Array.isArray(rev)) {
-        //     for (const item of rev) {
-        //         if (!item.size)
-        //             item.children = await network.getFileTree(item.path);
-        //     }
-        // }
+            message(`请求列表失败 ${err}`);
         return rev || null;
     }
 };
@@ -69,12 +57,40 @@ const comm = {
     }
 }
 
+/**
+ * 请求状态
+ * @typedef TNetworkAdapterStateLoading
+ * @property {string} tree 读取文件树
+ * @property {string} file 上传/下载文件
+ */
+/**
+ * 文件
+ * @typedef TNetworkAdapterStateData
+ * @property {TTreeItem[]} arr
+ * @property {{ length: number, [K: string]: TTreeItem }} kvs
+ */
+/**
+ * NetworkAdapter 状态
+ * @typedef TNetworkAdapterState
+ * @property {TNetworkAdapterStateLoading} loading
+ * @property {TNetworkAdapterStateData} data
+ */
+
+/** @type {React.Context<TNetworkAdapterState>} */
+export const Context = React.createContext({});
+
 export function NetworkAdapter({ children }) {
+    /** @type {TNetworkAdapterState} */
+    const state = hookGetState({ loading: null, data: null });
     useEffect(() => {
-        comm.getFileTree().then(rev => {
-            console.log('lis', rev)
-        })
+        state.loading = { tree: '/', path: '' };
+        comm.getFileTree().then(data => {
+            hookSetState(state, { loading: { tree: '', path: '' }, data })
+        });
     }, []);
-    const value = {};
-    return <Context.Provider value={value}>{children}</Context.Provider>;
+
+    const value = { loading: state.loading || {}, data: state.data || {} };
+    return <Context.Provider value={value}>
+        {children}
+    </Context.Provider>;
 }
