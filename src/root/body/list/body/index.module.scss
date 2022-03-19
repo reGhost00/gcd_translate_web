@@ -2,5 +2,54 @@
 
 .body {
     @extend .sub_body;
+    overflow: hidden;
+    --NAME_WIDTH:   333px;
+    ---SIZE_WIDTH:  111px;
+}
+
+.header,
+.list_row {
+    display: flex;
+    align-items: center;
+}
+
+.header {
+    height: 2.5rem;
+}
+
+.header_toggle {
+    @include wh($resize_toggle_width, 100%);
+    cursor: w-resize;
+    flex: none;
+    background-color: $listHeader_bgc;
+    &:hover {
+        background-color: $resize_toggle_bgc_hover;
+    }
+    &:global(.active) {
+        background-color: $resize_toggle_bgc_active;
+        height: 100vh;
+        align-self: flex-start;
+    }
+}
+
+.list_item {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding: 0 10px;
+    &:global(.name) {
+        width:  var(--NAME_WIDTH);
+    }
+    &:global(.size) {
+        width:  var(--SIZE_WIDTH);
+    }
+}
+
+.list_row {
+    height: 2rem;
+}
+
+.list {
+    height: calc($sub_body_height - 2.5rem);
     overflow: hidden auto;
 }

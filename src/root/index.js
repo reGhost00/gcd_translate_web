@@ -1,9 +1,10 @@
 import Body from "./body"
 import Top from "./top"
-import { NetworkAdapter } from "./network-adapter";
+import { DataAdapter } from "./data-adapter";
+
 export default function Root() {
-    return <NetworkAdapter>
+    return <DataAdapter>
         <Top/>
         <Body/>
-    </NetworkAdapter>;
+    </DataAdapter>;
 }

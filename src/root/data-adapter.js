@@ -59,37 +59,58 @@ const comm = {
 
 /**
  * 请求状态
- * @typedef TNetworkAdapterStateLoading
+ * @typedef TDataAdapterStateLoading
  * @property {string} tree 读取文件树
  * @property {string} file 上传/下载文件
  */
 /**
  * 文件
- * @typedef TNetworkAdapterStateData
+ * @typedef TDataAdapterStateData
  * @property {TTreeItem[]} arr
  * @property {{ length: number, [K: string]: TTreeItem }} kvs
  */
 /**
- * NetworkAdapter 状态
- * @typedef TNetworkAdapterState
- * @property {TNetworkAdapterStateLoading} loading
- * @property {TNetworkAdapterStateData} data
+ * DataAdapter 状态
+ * @typedef TDataAdapterState
+ * @property {TDataAdapterStateLoading} loading
+ * @property {TDataAdapterStateData} data
+ * @property {TTreeItem} currFolder
+ */
+/**
+ * @typedef TContextAction
+ * @property
  */
 
-/** @type {React.Context<TNetworkAdapterState>} */
+/** @type {React.Context<TDataAdapterState>} */
 export const Context = React.createContext({});
 
-export function NetworkAdapter({ children }) {
-    /** @type {TNetworkAdapterState} */
-    const state = hookGetState({ loading: null, data: null });
+export function DataAdapter({ children }) {
+    /** @type {TDataAdapterState} */
+    const state = hookGetState({ loading: null, data: null, currFolder: null });
     useEffect(() => {
         state.loading = { tree: '/', path: '' };
         comm.getFileTree().then(data => {
+            data.currFolder = { name: '/', path: '/', children: data.arr };
+            data.kvs['/'] = data.currFolder;
             hookSetState(state, { loading: { tree: '', path: '' }, data })
         });
     }, []);
 
-    const value = { loading: state.loading || {}, data: state.data || {} };
+    const action = {
+        /**
+         * 切换当前目录
+         * @param {string} newFolderPath
+         */
+        setCurrFolder(newFolderPath) {
+            const kvs = state.data?.kvs || {};
+            state.currFolder = kvs[newFolderPath] || null;
+        }
+    };
+    const value = {
+        action,
+        ...state
+    }
+
     return <Context.Provider value={value}>
         {children}
     </Context.Provider>;

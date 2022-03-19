@@ -3,7 +3,8 @@ import styles from "./index.module.scss";
 
 /**
  * @typedef TResizeParentArgs
- * @property {string} nodeName 父元素
+ * @property {HTMLElement} parent css变量所在元素
+ * @property {string} nodeName 容器
  * @property {string[]} vars css变量
  * @property {string} toggleClass toggle样式
  * @property {React.ReactNode[]} children
@@ -13,7 +14,7 @@ import styles from "./index.module.scss";
  * @component
  * @param {TResizeParentArgs} props
  */
- export function HorizontalResizeParent({ nodeName, vars, toggleClassName, children, ...rest }) {
+ export function HorizontalResizeParent({ nodeName, vars, toggleClassName, parent, children, ...rest }) {
     const refs = {
         $: useRef(null),
         $toggle: useRef(null),
@@ -46,7 +47,6 @@ import styles from "./index.module.scss";
             else
                 onResizeEnd();
         }
-        rest.ref = refs.$;
         rest.onMouseDown = function onResizeStart(ev) {
             refs.$toggle.current = ev.target;
             if (refs.$toggle.current.classList.contains(refs.toggleCSS.current)) {
@@ -61,6 +61,10 @@ import styles from "./index.module.scss";
                 refs.$.current.removeEventListener("mousemove", onResizing);
             }
         }
+        if (parent instanceof HTMLElement)
+            refs.$.current = parent;
+        else
+            rest.ref = refs.$;
         return React.createElement(nodeName || "div", rest, $childrenWithToggle || null);
     }
     return null;
