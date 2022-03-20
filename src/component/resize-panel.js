@@ -25,7 +25,7 @@ import styles from "./index.module.scss";
     if (children?.length) {
         refs.toggleCSS.current = toggleClassName || styles.resize_toggle_horizontal;
         const $childrenWithToggle = Array.isArray(vars)
-            ? vars.reduce((prev, curr, idx) => [...prev, children[idx], <div key={curr} data-resize-name={curr} className={refs.toggleCSS.current} />], []).concat(children.slice(vars.length))
+            ? vars.reduce((prev, curr, idx) => [...prev, children[idx], curr && <div key={curr} data-resize-name={curr} className={refs.toggleCSS.current} />], []).concat(children.slice(vars.length))
             : children.reduce((prev, curr, idx) => [...prev, curr, <div key={idx} data-resize-name={`--RESIZE_IDX${idx}_WIDTH`} className={refs.toggleCSS.current} />], []);
         function onResizeEnd() {
             refs.$.current.removeEventListener("mousemove", onResizing);

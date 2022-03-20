@@ -10,6 +10,7 @@
 .resize_toggle {
     @include wh($resize_toggle_width, 100%);
     cursor: w-resize;
+    user-select: none;
     flex: none;
     background-color: $resize_toggle_bgc;
     &:hover {

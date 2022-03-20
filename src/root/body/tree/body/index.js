@@ -1,16 +1,16 @@
 import React, { useContext } from "react";
 import { Icon } from "component/icon";
 import { Context as DataContext } from "root/data-adapter";
-import styles from "./index.module.scss";
 import { isNotNullArray } from "utils/c";
+import styles from "./index.module.scss";
 
+/** @typedef {import("root/data-adapter.js").TTreeItem} TTreeItem */
 /**
  * @typedef TTreeItemArgs
- * @property {string} name 标题
- * @property {string} path 路径
+ * @property {number} level 嵌套深度，用于样式 
  */
 /**
- * @param {TTreeItemArgs} props
+ * @param {TTreeItemArgs & TTreeItem} props
  */
 function TreeItem(props) {
     const { action, currFolder } = useContext(DataContext);
@@ -24,7 +24,7 @@ function TreeItem(props) {
     const itemStyle = { "--LEVEL": props.level * 1 || 0 };
     const $title = <span className={styles.treeItem_item_title}>{props.name}</span>;
     return <div style={itemStyle}>
-        <div className={styles.treeItem_item} onClick={onItemClick}>
+        <div className={`${styles.treeItem_item} ${active && "active"}`} onClick={onItemClick}>
             <Icon name={iconName} className={styles.treeItem_item_icon} />
             {$title}
         </div>
@@ -34,7 +34,7 @@ function TreeItem(props) {
 
 /**
  * 渲染文件夹树
- * @param {array} list
+ * @param {TTreeItem[]} list
  */
 function listRender(list, level=0) {
     return isNotNullArray(list) && list.reduce((prev, curr) => {
