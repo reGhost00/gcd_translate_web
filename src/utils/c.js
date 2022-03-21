@@ -21,6 +21,12 @@ export function isNotNullArray(arr) {
     return Array.isArray(arr) && arr.length > 0;
 }
 
+export function getReadableSize(size){
+    const sizeKB = size / 1024;
+    return  sizeKB > 1024
+        ? `${Math.round(sizeKB / 1024 * 100) / 100}MB`
+        : `${Math.round(sizeKB * 100) / 100}KB`;
+}
 // /**
 //  * 数据转对象
 //  * 下标 > 索引

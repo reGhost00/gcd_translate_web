@@ -1,3 +1,5 @@
 @import "../def";
 
-$treeHeader_bgc: darken($tree_bgc, 5%);
+$tree_icon_color: darken($icon_color, 3%);
+$tree_icon_hover_color: darken($icon_hover_color, 3%);
+$tree_icon_hover_bgc: darken($icon_hover_bgc, 3%);

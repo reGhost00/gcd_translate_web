@@ -27,7 +27,7 @@ const network = {
         /** @type {[null | Error, TGCDFileItem[]]} */
         const [err, rev] = await noThrowWrap(fetchDataReceiver(fetch(`/list?path=${path}`)));
         if (err)
-            message(`请求列表失败 ${err}`);
+            message.error(`请求列表失败 ${err}`);
         return rev || null;
     }
 };
@@ -90,9 +90,15 @@ export function DataAdapter({ children }) {
     useEffect(() => {
         state.loading = { tree: '/', path: '' };
         comm.getFileTree().then(data => {
-            data.currFolder = { name: '/', path: '/', children: data.arr };
-            data.kvs['/'] = data.currFolder;
-            hookSetState(state, { loading: { tree: '', path: '' }, data })
+            const newState = {
+                loading: { tree: '', path: '' },
+                currFolder: { name: '/', path: '/', children: data.arr },
+                data
+            }
+            newState.data.kvs['/'] = newState.data.currFolder;
+            hookSetState(state, newState);
+
+
         });
     }, []);
 

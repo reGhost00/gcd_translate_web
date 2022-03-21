@@ -5,6 +5,9 @@ $treeItem_padding:0 0 0 calc(1rem * var(--LEVEL) + 10px);
 
 $treeItem_title_padding: 0 10px;
 
+$treeItem_hover_bgc: darken($row_hover_bgc, 3%);
+$tree_icon_hover_bgc: lighten($treeItem_hover_bgc, 5%);
+
 .body {
     @extend .sub_body;
     overflow: hidden auto;
@@ -16,17 +19,23 @@ $treeItem_title_padding: 0 10px;
     white-space:nowrap;
 }
 
-.treeItem_item {
+.treeItem_item,
+.treeItem_item:hover .actionGroup {
     display:    flex;
     align-items:center;
+}
+
+.treeItem_item {
     height:     $treeItem_height;
     padding:    $treeItem_padding;
-    transition: $normal_transition;
+    &:hover {
+        background-color: $treeItem_hover_bgc;
+    }
 }
 
 .treeItem_item_icon {
     flex:   none;
-    color:  $icon_color;
+    color:  $tree_icon_color;
 }
 
 
@@ -34,4 +43,17 @@ $treeItem_title_padding: 0 10px;
     flex:   auto;
     padding:$treeItem_title_padding;
     text-overflow:  ellipsis;
+}
+
+.actionGroup {
+    display: none;
+}
+
+.actionGroup_icon {
+    @include wh(1.5em);
+    flex: none;
+    color: $tree_icon_color;
+    &:hover {
+        @include cc($tree_icon_hover_color, $tree_icon_hover_bgc);
+    }
 }

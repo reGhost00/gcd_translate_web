@@ -84,6 +84,7 @@ $message_err_border: 1px solid darken($message_err_bgc, 10%);
 .thisMessageContainer {
     padding: $message_padding;
     overflow: hidden;
+    flex: none;
 }
 
 .dias_normalMessage {

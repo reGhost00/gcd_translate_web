@@ -1,9 +1,9 @@
 @import "./var";
 @import "./ext";
 
-html, body, ul, ol, p, div,
+html, body, ul, ol, li, p, div,
 section, article, main, aside, nav,
-u, i, b, a,
+u, i, b, a, span,
 h1, h2, h3, h4, h5, h6,
 input, textarea, button, select{
 	font-size: 100%;
@@ -27,4 +27,8 @@ body, html, p, ul, ol, input, h1, h2, h3, h4, h5, h6, textarea, select{
     line-height: 1.2;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+}
+
+.P05 {
+    padding: 0 5px;
 }

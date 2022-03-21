@@ -1,10 +1,15 @@
 @import "../def";
 
+$list_header_height: 2.5rem;
+$list_row_height: 2rem;
+
+$list_item_idx_width: 40px;
+
 .body {
     @extend .sub_body;
     overflow: hidden;
-    --NAME_WIDTH:   333px;
-    ---SIZE_WIDTH:  111px;
+    --NAME_WIDTH: 333px;
+    --SIZE_WIDTH: 111px;
 }
 
 .header,
@@ -14,7 +19,7 @@
 }
 
 .header {
-    height: 2.5rem;
+    height: $list_header_height;
 }
 
 .header_toggle {
@@ -33,21 +38,54 @@
     }
 }
 
+.list_item:global(.idx):hover,
+.list_item:global(.idx.active),
+.list_row:hover .list_item:global(.idx),
+.list_row:global(.active) .list_item:global(.idx) {
+    > [type="checkbox"] {
+        display: block;
+        & + * {
+            display: none;
+        }
+    }
+}
+
 .list_item {
+    display: inline-flex;
+    align-items: center;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    padding: 0 10px;
+    padding: $list_item_padding;
+    &:global(.idx) {
+        // 序号 & 选择框
+        justify-content: center;
+        width: $list_item_idx_width;
+        > [type="checkbox"] {
+            display: none;
+        }
+    }
     &:global(.name) {
+        // 文件名
         width:  var(--NAME_WIDTH);
     }
     &:global(.size) {
+        // 文件大小
         width:  var(--SIZE_WIDTH);
     }
 }
 
 .list_row {
-    height: 2rem;
+    height: $list_row_height;
+    &:hover {
+        background-color: $row_hover_bgc;
+    }
+    &:global(.active) {
+        background-color: $row_active_bgc;
+        &:hover {
+            background-color: $row_active_hover_bgc;
+        }
+    }
 }
 
 .list {

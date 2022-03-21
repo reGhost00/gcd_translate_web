@@ -14,14 +14,17 @@ $sub_header_height: 3rem;
 $sub_body_height: calc($body_height - $sub_header_height);
 
 $icon_fsz: 15px;
-$icon_color: #999;
-$icon_color_hover: #77b;
-$icon_bgc_hover: #ccc;
+$icon_color: #aaa;
+$icon_hover_color: #88c;
+$icon_hover_bgc: #ddd;
 
 $headerMenu_icon_wh: 2em;
 
 $itemAction_icon_wh: 1.5em;
 
+$row_hover_bgc: #ddf;
+$row_active_bgc: darken($row_hover_bgc, 3%);
+$row_active_hover_bgc: darken($row_active_bgc, 3%);
 
 .sub_header {
     @extend .AIC;
@@ -32,16 +35,16 @@ $itemAction_icon_wh: 1.5em;
     height: $sub_body_height;
 }
 
-.icon {
-    font-size: $icon_fsz;
-    color: $icon_color;
-    transition: all linear 100ms;
-    &:hover {
-        @include cc($icon_color_hover, $icon_bgc_hover);
-    }
-}
+// .icon {
+//     font-size: $icon_fsz;
+//     color: $icon_color;
+//     transition: all linear 100ms;
+//     &:hover {
+//         @include cc($icon_hover_color, $icon_hover_bgc);
+//     }
+// }
 
-.headerMenu_icon {
-    @extend .icon;
-    @include wh($headerMenu_icon_wh);
-}
+// .headerMenu_icon {
+//     @extend .icon;
+//     @include wh($headerMenu_icon_wh);
+// }

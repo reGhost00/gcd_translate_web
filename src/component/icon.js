@@ -16,3 +16,17 @@ export function Icon({ name, ...rest }) {
         </svg>
     </span>;
 }
+
+/**
+ * @typedef TIconBarArgs
+ * @property {TIconArgs[]} icons
+ */
+/**
+ * fontAwesome icon bar wrap
+ * @param {TIconBarArgs} props
+ */
+export function IconBar({ icons, ...rest }) {
+    return Array.isArray(icons) && <div {...rest}>
+        {icons.map((icon, idx) => <Icon key={`${idx}${icon.name}`} {...icon} />)}
+    </div>;
+}

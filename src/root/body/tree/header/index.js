@@ -5,6 +5,6 @@ export default function TreeHeader() {
     return <header className={styles.header}>
         <Icon name="#rotate" className={styles.headerMenu_icon} />
         <Icon name="#folder-plus" className={styles.headerMenu_icon} />
-        <Icon name="#file-arrow-up" className={styles.headerMenu_icon} />
+        <Icon name="#folder-arrow-up" className={styles.headerMenu_icon} />
     </header>;
 }
