@@ -1,7 +1,7 @@
 @import "./def";
 
 .top {
-    @extend .AIC;
+    @include aic;
     position: relative;
     height: $top_height;
     background-color: $top_bgc;

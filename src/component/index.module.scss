@@ -51,11 +51,16 @@ $message_err_border: 1px solid darken($message_err_bgc, 10%);
     align-items: center;
     justify-content: center;
     overflow: hidden;
+    flex: none;
     > svg {
         @include wh(1em);
         fill: currentColor;
         pointer-events: none;
     }
+}
+
+.iconBar {
+    @include aic;
 }
 
 @keyframes normal_dropdown {
@@ -70,14 +75,13 @@ $message_err_border: 1px solid darken($message_err_bgc, 10%);
 }
 
 .normalDiaContainer {
+    @include aic;
+    flex-direction: column;
     position: fixed;
     top: 0;
     z-index: 9999;
     width: 100vw;
     max-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     pointer-events: none;
 }
 

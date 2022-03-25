@@ -80,7 +80,7 @@ $list_item_idx_width: 40px;
     &:hover {
         background-color: $row_hover_bgc;
     }
-    &:global(.active) {
+    &:global(.selected) {
         background-color: $row_active_bgc;
         &:hover {
             background-color: $row_active_hover_bgc;

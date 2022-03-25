@@ -3,9 +3,9 @@ import ReactDOM from "react-dom";
 import { Icon } from "./icon";
 import styles from "./index.module.scss";
 
-const DEF = {
+const DEF = Object.freeze({
     messageTimeout: 3333
-};
+});
 
 /**
  * dom 实例单例

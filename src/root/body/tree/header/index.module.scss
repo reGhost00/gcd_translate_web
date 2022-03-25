@@ -12,9 +12,11 @@ $tree_header_icon_hover_bgc: darken($tree_icon_hover_bgc, 3%);
 }
 
 .headerMenu_icon {
+    @include mp;
     @include wh($headerMenu_icon_wh);
+    @include cc($tree_header_icon_color, transparent);
+    border: 0;
     font-size: $icon_fsz;
-    color: $tree_header_icon_color;
     &:hover {
         @include cc($tree_header_icon_hover_color, $tree_header_icon_hover_bgc);
     }

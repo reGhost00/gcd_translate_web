@@ -32,3 +32,24 @@ body, html, p, ul, ol, input, h1, h2, h3, h4, h5, h6, textarea, select{
 .P05 {
     padding: 0 5px;
 }
+
+.OVF {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.DF {
+    display: flex;
+}
+
+.DIF {
+    display: inline-flex;
+}
+
+.DF, .DIF {
+    &.AIC { align-items: center; }
+    &.JCC { justify-content: center; }
+    >.FA { flex: auto; }
+    >.FN { flex: none; }
+}

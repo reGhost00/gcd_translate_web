@@ -27,6 +27,54 @@ export function getReadableSize(size){
         ? `${Math.round(sizeKB / 1024 * 100) / 100}MB`
         : `${Math.round(sizeKB * 100) / 100}KB`;
 }
+
+
+function cancelDefault(ev){
+    if("function" === typeof ev.stopPropagation){
+        ev.stopPropagation();
+        ev.preventDefault();
+    }
+}
+
+export function hofDOMClassFilter(...args) {
+    if ("function" === typeof args[1] && "string" === typeof args[0] && args[0]) {
+        const [cn, fn] = args;
+        return function domClassFilterWrap(ev, ...rest) {
+            const $tar = ev instanceof HTMLElement ? ev : ev.target;
+            if ($tar instanceof HTMLElement && $tar.classList.contains(cn)) {
+                cancelDefault(ev);
+                return fn.apply(this || null, [$tar, ev, ...rest]);
+            }
+        };
+    }
+    else if ("[object Object]" === Object.prototype.toString.call(args[0])) {
+        const classes = Object.keys(args[0]);
+        return classes.length && function domClassesFilterWrap(ev, ...rest) {
+            const $tar = ev instanceof HTMLElement ? ev : ev.target;
+            if ($tar instanceof HTMLElement) {
+                for (const css of classes) {
+                    if ($tar.classList.contains(css)) {
+                        cancelDefault(ev);
+                        return "function" === typeof args[0][css] && args[0][css].apply(this || null, [$tar, ev, ...rest]);
+                    }
+                }
+            }
+        };
+    }
+}
+
+export function hofCallWithCondition(fnCondition, fnTarget) {
+    return "function" === typeof fnCondition && "function" === typeof fnTarget && function callWithConditionWrap(...args) {
+        return fnCondition.apply(this, args) && fnTarget.apply(this, args);
+    }
+}
+
+export function hofGetDOMValue(fn) {
+    return "function" === typeof fn && function getDOMValueWrap(ev) {
+        const $ = ev.target instanceof HTMLElement ? ev.target : ev;
+        return $ instanceof HTMLElement && fn($.value);
+    }
+}
 // /**
 //  * 数据转对象
 //  * 下标 > 索引
@@ -43,3 +91,15 @@ export function getReadableSize(size){
 //         };
 //     }
 // }
+export function deepFreeze(obj) {
+    if (typeof obj === "object" && obj) {
+        let prop = null;
+        Object.getOwnPropertyNames(obj).forEach(name => {
+            prop = obj[name];
+            if (typeof prop === "object" && prop)
+                deepFreeze(prop);
+        });
+        return Object.freeze(obj);
+    } else
+        return obj;
+}
