@@ -88,14 +88,14 @@ export function DataAdapter({ children }) {
     /** @type {TDataAdapterState} */
     const state = hookGetState({ loading: null, data: null, currFolder: null });
     useEffect(() => {
-        state.loading = { tree: '/', path: '' };
+        state.loading = { tree: "/", path: "" };
         comm.getFileTree().then(data => {
             const newState = {
-                loading: { tree: '', path: '' },
-                currFolder: { name: '/', path: '/', children: data.arr },
+                loading: { tree: "", path: "" },
+                currFolder: { name: "/", path: "/", children: data.arr },
                 data
             }
-            newState.data.kvs['/'] = newState.data.currFolder;
+            newState.data.kvs["/"] = newState.currFolder;
             hookSetState(state, newState);
 
 

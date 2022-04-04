@@ -9,6 +9,10 @@ $treeItem_hover_bgc: darken($tree_bgc, 3%);
 $treeItem_active_bgc: lighten($tree_bgc, 3%);
 $treeItem_active_hover_bgc: $row_hover_bgc;
 
+$treeItem_editing_bgc: #fffc;
+$treeItem_editing_input_margin: 0 0 0 5px;
+$treeItem_editing_input_padding: 0 4em 0 5px;
+
 $actionGroup_hover_bgc: lighten($treeItem_hover_bgc, 5%);
 
 .body {
@@ -28,8 +32,9 @@ $actionGroup_hover_bgc: lighten($treeItem_hover_bgc, 5%);
 }
 
 .treeItem_item,
-.treeItem_item_editing {
-    height:     $treeItem_height;
+.treeItem_item_editing,
+.treeItem_item_create {
+    @include hh($treeItem_height);
     padding:    $treeItem_padding;
 }
 
@@ -48,14 +53,13 @@ $actionGroup_hover_bgc: lighten($treeItem_hover_bgc, 5%);
     }
 }
 
+.treeItem_item_create,
 .treeItem_item_editing {
-    background-color: #fff;
+    background-color: $treeItem_editing_bgc;
     position: relative;
     input {
-        @include mp(0 0 0 5px, 0 4em 0 5px);
-        border: 1px solid #ccc;
-        height: 2em;
-        flex: auto;
+        @include hh($treeItem_height);
+        padding: $treeItem_editing_input_padding;
     }
     .actionGroup {
         display: flex;
@@ -68,6 +72,15 @@ $actionGroup_hover_bgc: lighten($treeItem_hover_bgc, 5%);
     }
 }
 
+.treeItem_item_editing input {
+    margin: $treeItem_editing_input_margin;
+    flex: auto;
+}
+
+.treeItem_item_create input {
+    width: 100%;
+}
+
 .treeItem_item_icon {
     flex:   none;
     color:  $tree_icon_color;
@@ -76,7 +89,6 @@ $actionGroup_hover_bgc: lighten($treeItem_hover_bgc, 5%);
 .treeItem_item_title {
     flex:   auto;
     padding:$treeItem_title_padding;
-    text-overflow:  ellipsis;
 }
 
 .actionGroup_icon {

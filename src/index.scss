@@ -29,27 +29,38 @@ body, html, p, ul, ol, input, h1, h2, h3, h4, h5, h6, textarea, select{
     -moz-osx-font-smoothing: grayscale;
 }
 
-.P05 {
-    padding: 0 5px;
+[type="text"] {
+    @include mp(0, $normal_input_padding);
+    border: $normal_input_border;
+    background-color: #fff;
+    outline: 0;
+    &:focus {
+        border-color: #77c;
+        box-shadow: inset 0 0 2px #99c;
+    }
 }
 
-.OVF {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
+// .P05 {
+//     padding: 0 5px;
+// }
 
-.DF {
-    display: flex;
-}
+// .OVF {
+//     overflow: hidden;
+//     text-overflow: ellipsis;
+//     white-space: nowrap;
+// }
 
-.DIF {
-    display: inline-flex;
-}
+// .DF {
+//     display: flex;
+// }
 
-.DF, .DIF {
-    &.AIC { align-items: center; }
-    &.JCC { justify-content: center; }
-    >.FA { flex: auto; }
-    >.FN { flex: none; }
-}
+// .DIF {
+//     display: inline-flex;
+// }
+
+// .DF, .DIF {
+//     &.AIC { align-items: center; }
+//     &.JCC { justify-content: center; }
+//     >.FA { flex: auto; }
+//     >.FN { flex: none; }
+// }
