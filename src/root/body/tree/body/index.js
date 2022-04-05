@@ -8,6 +8,10 @@ import { hookGetState, hookSetState } from "utils/r";
 /** @typedef {import("root/data-adapter.js").TTreeItem} TTreeItem */
 
 const DEF = deepFreeze({
+    rootActions: [
+        { name: "#folder-plus", title: "新建文件夹", className: `${styles.actionGroup_icon} create`, nodeName: "button" },
+        { name: "#folder-arrow-down", title: "下载", className: `${styles.actionGroup_icon} download`, nodeName: "button" }
+    ],
     itemActions: [
         { name: "#pen-to-square", title: "重命名", className: `${styles.actionGroup_icon} rename`, nodeName: "button" },
         { name: "#folders", title: "移动", className: `${styles.actionGroup_icon} move`, nodeName: "button" },
@@ -61,6 +65,7 @@ function TreeItemCreate(props) {
  */
 function TreeItem(props) {
     const { currFolder } = useContext(DataContext);
+    const state = hookGetState({ folderName: '', message: null });
     const [editingValue, setEditingValue] = useState(props.name);
     useEffect(() => props.editing && setEditingValue(props.name), [props.editing]);
     const func = {
@@ -79,9 +84,26 @@ function TreeItem(props) {
     const active = props.path && currFolder && props.path === currFolder.path;
     const iconName = active ? "#folder-open" : "#folder";
     const itemStyle = { "--LEVEL": props.level * 1 || 0 };
+    const attr = {
+        input: props.editing && {
+            type:   "text",
+            value:  state.folderName,
+            placeholder: "请输入新文件夹名",
+            onChange:hofGetDOMValue(function onFolderNameChange(folderName) {
+                const message = /[\\/:*?"<>|]/.test(folderName) && `文件名不能包含下列任何字符\n\\ / : * ? " < > |`;
+                if (message)
+                    state.message = message;
+                else
+                    hookSetState(state, { folderName, message });
+            })
+        }
+    };
     const $item = props.editing ? <div className={styles.treeItem_item_editing}>
         <Icon name={iconName} className={styles.treeItem_item_icon} />
-        <input type="text" value={editingValue} onChange={hofGetDOMValue(setEditingValue)} />
+        <label>
+            <input {...attr.input} />
+            {state.message && <div>{state.message}</div>}
+        </label>
         <IconBar icons={DEF.editingActions} className={styles.actionGroup} onClick={func.onEditingActionGroupClick}/>
     </div> : <div className={`${styles.treeItem_item} ${active && "active"}`} onClick={func.onItemClick}>
         <Icon name={iconName} className={styles.treeItem_item_icon} />
@@ -103,21 +125,20 @@ function TreeItem(props) {
 export default function TreeBody() {
     const { action, data } = useContext(DataContext);
     /** @type {TTreeBodyState} */
-    const state = hookGetState({ editing: null, create: null });
+    const state = hookGetState({ editing: null, create: null, folderName: null });
     const func = {
         onActionGroupClick: hofCallWithCondition(function editingStatusGuard() {
             return !state.editing && !state.create;
         }, hofDOMClassFilter({
-            rename($tar) {
-                const path = this.path || $tar.dataset.path;
-                action.setCurrFolder(path);
-                state.editing = path;
+            rename() {
+                action.setCurrFolder(this.path);
+                state.editing = this.path;
             },
             move() {
                 console.log('move', this)
             },
-            create($tar) {
-                const path = this.path || $tar.dataset.path;
+            create() {
+                const path = this?.path || "/";
                 action.setCurrFolder(path);
                 state.create = path;
             },
@@ -130,21 +151,33 @@ export default function TreeBody() {
         })),
         onItemClick(path) {
             if (!state.editing && !state.create) {
-                action.setCurrFolder(this.path || path);
+                action.setCurrFolder(path || "/");
             }
         },
         onActionCancel() {
-            hookSetState(state, { editing: null, create: null });
+            hookSetState(state, { editing: null, create: null, folderName: null });
         },
         onEditingSubmit(newFolderName) {
             console.log('onEditingSubmit', this, newFolderName)
             func.onActionCancel();
         },
-        onCreateSubmit(newFolderName) {
+        onCreateSubmit(newFolderName = state.folderName) {
             console.log("onNewFolderSubmit", this, newFolderName)
             func.onActionCancel();
         }
     };
+    const attrRootAction = {
+        icons:      DEF.rootActions,
+        className:  styles.actionGroup,
+        "data-path":"/",
+        onClick:    func.onActionGroupClick
+    };
+    const attrRootItem = {
+        name: "/",
+        path: "/",
+        actions: <IconBar {...attrRootAction}/>,
+        onClick: func.onItemClick
+    }
     /**
      * 渲染文件夹树
      * @param {TTreeItem[]} list
@@ -152,13 +185,10 @@ export default function TreeBody() {
     function treeRender(list, level=0) {
         return isNotNullArray(list) && list.reduce((prev, curr) => {
             if (!curr.size) {
-                // const subs = [];
-                // const subs = isNotNullArray(curr.children) && treeRender(curr.children, level + 1);
                 const editing = state.editing && state.editing === curr.path;
                 const attrAction = !editing && {
                     icons:      DEF.itemActions,
                     className:  styles.actionGroup,
-                    "data-path":curr.path,
                     onClick:    func.onActionGroupClick.bind(curr)
                 };
                 const attrItem = Object.assign({
@@ -166,19 +196,21 @@ export default function TreeBody() {
                     editing,
                     key:            curr.path,
                     actions:        !editing && <IconBar {...attrAction}/>,
-                    onClick:        func.onItemClick.bind(curr),
+                    onClick:        func.onItemClick,
                     onEditingCancel:func.onActionCancel,
                     onEditingSubmit:func.onEditingSubmit.bind(curr)
                 }, curr);
                 const subs = isNotNullArray(curr.children) && treeRender(curr.children, level + 1);
-                const children = [state.create && state.create === curr.path && <TreeItemCreate onSubmit={func.onCreateSubmit.bind(curr)} onCancel={func.onActionCancel} />].concat(subs || []);
+                const children = [curr.path === state.create && <TreeItemCreate onSubmit={func.onCreateSubmit.bind(curr)} onCancel={func.onActionCancel} />].concat(subs || []);
                 prev.push(<TreeItem {...attrItem}>{children}</TreeItem>);
             }
             return prev;
         }, []);
     }
-    return <div className={styles.body}>
-        <TreeItem name="/" path="/" onClick={() => func.onItemClick("/")}/>
+    return <div className={`${styles.body} ${(state.create || state.editing) && "disabled"}`}>
+        <TreeItem {...attrRootItem}>
+            {"/" === state.create && <TreeItemCreate onSubmit={func.onCreateSubmit} onCancel={func.onActionCancel}/> }
+        </TreeItem>
         {treeRender(data?.arr)}
     </div>
 }

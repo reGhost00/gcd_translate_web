@@ -34,6 +34,8 @@ $message_err_bgc: #fdd;
 $message_err_icon_color: #933;
 $message_err_bxsd: 0 0 $message_bdrs $message_err_bgc;
 $message_err_border: 1px solid darken($message_err_bgc, 10%);
+//
+// resize
 .resize_toggle_horizontal {
     @include wh($resize_toggle_horizontal_width, 100%);
     cursor: w-resize;
@@ -45,7 +47,8 @@ $message_err_border: 1px solid darken($message_err_bgc, 10%);
         background-color: $resize_toggle_horizontal_bgc_active;
     }
 }
-
+//
+// icon 
 .icon {
     display: inline-flex;
     align-items: center;
@@ -62,7 +65,8 @@ $message_err_border: 1px solid darken($message_err_bgc, 10%);
 .iconBar {
     @include aic;
 }
-
+//
+// dias
 @keyframes normal_dropdown {
     from {
         transform: translateY(-100%);

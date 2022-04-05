@@ -18,6 +18,12 @@ $actionGroup_hover_bgc: lighten($treeItem_hover_bgc, 5%);
 .body {
     @extend .sub_body;
     overflow: hidden auto;
+    &:global(.disabled) .treeItem_item {
+        background-color: transparent;
+        .actionGroup {
+            display: none;
+        }
+    }
 }
 
 .treeItem_item,
@@ -96,6 +102,7 @@ $actionGroup_hover_bgc: lighten($treeItem_hover_bgc, 5%);
     @include mp;
     @include cc($tree_icon_color, transparent);
     border: 0;
+    border-radius: 2px;
     flex: none;
     &:hover {
         @include cc($tree_icon_hover_color, $actionGroup_hover_bgc);
