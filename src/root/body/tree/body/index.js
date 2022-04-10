@@ -1,9 +1,10 @@
 import React, { useContext, useState, useEffect } from "react";
 import { Icon, IconBar } from "component/icon";
 import { Context as DataContext } from "root/data-adapter";
-import { deepFreeze, hofCallWithCondition, hofDOMClassFilter, hofGetDOMValue, isNotNullArray } from "utils/c";
+import { deepFreeze, hofCallContinue, hofCallWithCondition, hofDOMClassFilter, hofGetDOMValue, isNotNullArray } from "utils/c";
 import styles from "./index.module.scss";
 import { hookGetState, hookSetState } from "utils/r";
+import InputWithMessage from "component/input-with-message";
 
 /** @typedef {import("root/data-adapter.js").TTreeItem} TTreeItem */
 
@@ -66,21 +67,10 @@ function TreeItemCreate(props) {
 function TreeItem(props) {
     const { currFolder } = useContext(DataContext);
     const state = hookGetState({ folderName: '', message: null });
-    const [editingValue, setEditingValue] = useState(props.name);
-    useEffect(() => props.editing && setEditingValue(props.name), [props.editing]);
-    const func = {
-        onItemClick(ev) {
-            ev.preventDefault();
-            ev.stopPropagation();
-            props.onClick(props.path);
-        },
-        onEditingActionGroupClick: hofDOMClassFilter({
-            submit() {
-                props.onEditingSubmit(editingValue);
-            },
-            cancel: props.onEditingCancel
-        })
-    };
+    useEffect(() => {
+        state.folderName = props.editing ? props.name : "";
+    }, [props.editing]);
+
     const active = props.path && currFolder && props.path === currFolder.path;
     const iconName = active ? "#folder-open" : "#folder";
     const itemStyle = { "--LEVEL": props.level * 1 || 0 };
@@ -89,6 +79,8 @@ function TreeItem(props) {
             type:   "text",
             value:  state.folderName,
             placeholder: "请输入新文件夹名",
+            containerClassName: styles.treeItem_item_input,
+            message: state.message,
             onChange:hofGetDOMValue(function onFolderNameChange(folderName) {
                 const message = /[\\/:*?"<>|]/.test(folderName) && `文件名不能包含下列任何字符\n\\ / : * ? " < > |`;
                 if (message)
@@ -96,16 +88,34 @@ function TreeItem(props) {
                 else
                     hookSetState(state, { folderName, message });
             })
+        },
+        iconBar: props.editing && {
+            icons: DEF.editingActions,
+            className: styles.actionGroup,
+            onClick: hofCallContinue(hofDOMClassFilter({
+                submit() {
+                    props.onEditingSubmit(state.folderName);
+                },
+                cancel: props.onEditingCancel
+            }), function resetState() {
+                hookSetState(state, { folderName: '', message: null });
+            })
+        },
+        item: !props.editing && {
+            className: `${styles.treeItem_item} ${active && "active"}`,
+            onClick(ev){
+                ev.preventDefault();
+                ev.stopPropagation();
+                props.onClick(props.path);
+            }
         }
     };
     const $item = props.editing ? <div className={styles.treeItem_item_editing}>
         <Icon name={iconName} className={styles.treeItem_item_icon} />
-        <label>
-            <input {...attr.input} />
-            {state.message && <div>{state.message}</div>}
-        </label>
-        <IconBar icons={DEF.editingActions} className={styles.actionGroup} onClick={func.onEditingActionGroupClick}/>
-    </div> : <div className={`${styles.treeItem_item} ${active && "active"}`} onClick={func.onItemClick}>
+        <InputWithMessage {...attr.input}>
+            <IconBar {...attr.iconBar}/>
+        </InputWithMessage>
+    </div> : <div {...attr.item}>
         <Icon name={iconName} className={styles.treeItem_item_icon} />
         <span className={styles.treeItem_item_title} title={props.name}>{props.name}</span>
         {props.actions}

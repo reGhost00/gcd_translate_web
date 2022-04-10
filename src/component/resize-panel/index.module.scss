@@ -1,0 +1,18 @@
+@import "../_def";
+
+$resize_toggle_horizontal_width: 3px;
+$resize_toggle_horizontal_bgc:          darken($normal_bgc, 3%);
+$resize_toggle_horizontal_bgc_hover:    darken($resize_toggle_horizontal_bgc, 3%);;
+$resize_toggle_horizontal_bgc_active: #559;
+
+.resize_toggle_horizontal {
+    @include wh($resize_toggle_horizontal_width, 100%);
+    cursor: w-resize;
+    background-color: $resize_toggle_horizontal_bgc;
+    &:hover {
+        background-color: $resize_toggle_horizontal_bgc_hover;
+    }
+    &:global(.active) {
+        background-color: $resize_toggle_horizontal_bgc_active;
+    }
+}

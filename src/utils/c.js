@@ -69,6 +69,12 @@ export function hofCallWithCondition(fnCondition, fnTarget) {
     }
 }
 
+export function hofCallContinue(...fns) {
+    return function callContinueWrap(...args) {
+        return fns.reduce((prev, fn) => [fn.apply(this, prev), ...prev], args);
+    };
+}
+
 export function hofGetDOMValue(fn) {
     return "function" === typeof fn && function getDOMValueWrap(ev) {
         const $ = ev.target instanceof HTMLElement ? ev.target : ev;

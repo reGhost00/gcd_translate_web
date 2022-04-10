@@ -1,13 +1,5 @@
-@import "../var";
-@import "../ext";
+@import "../def";
 
-$resize_toggle_horizontal_width: 3px;
-$resize_toggle_horizontal_bgc:          darken($normal_bgc, 3%);
-$resize_toggle_horizontal_bgc_hover:    darken($resize_toggle_horizontal_bgc, 3%);;
-$resize_toggle_horizontal_bgc_active: #559;
-//
-// message
-// message other
 $message_padding:   10px;
 $message_bdrs:      3px;
 // normal
@@ -34,39 +26,7 @@ $message_err_bgc: #fdd;
 $message_err_icon_color: #933;
 $message_err_bxsd: 0 0 $message_bdrs $message_err_bgc;
 $message_err_border: 1px solid darken($message_err_bgc, 10%);
-//
-// resize
-.resize_toggle_horizontal {
-    @include wh($resize_toggle_horizontal_width, 100%);
-    cursor: w-resize;
-    background-color: $resize_toggle_horizontal_bgc;
-    &:hover {
-        background-color: $resize_toggle_horizontal_bgc_hover;
-    }
-    &:global(.active) {
-        background-color: $resize_toggle_horizontal_bgc_active;
-    }
-}
-//
-// icon 
-.icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    flex: none;
-    > svg {
-        @include wh(1em);
-        fill: currentColor;
-        pointer-events: none;
-    }
-}
 
-.iconBar {
-    @include aic;
-}
-//
-// dias
 @keyframes normal_dropdown {
     from {
         transform: translateY(-100%);
@@ -104,7 +64,7 @@ $message_err_border: 1px solid darken($message_err_bgc, 10%);
     background-color: $message_normal_bgc;
     border: $message_normal_border;
     animation: 333ms normal_dropdown;
-    .icon {
+    :global(.icon) {
         font-size: 16px;
         margin-right: 5px;
     }
@@ -112,7 +72,7 @@ $message_err_border: 1px solid darken($message_err_bgc, 10%);
         background-color: $message_info_bgc;
         box-shadow: $message_info_bxsd;
         border: $message_info_border;
-        .icon {
+        :global(.icon) {
             color: $message_info_icon_color;
         }
     }
@@ -120,7 +80,7 @@ $message_err_border: 1px solid darken($message_err_bgc, 10%);
         background-color: $message_succ_bgc;
         box-shadow: $message_succ_bxsd;
         border: $message_succ_border;
-        .icon {
+        :global(.icon) {
             color: $message_succ_icon_color;
         }
     }
@@ -128,7 +88,7 @@ $message_err_border: 1px solid darken($message_err_bgc, 10%);
         background-color: $message_warn_bgc;
         box-shadow: $message_warn_bxsd;
         border: $message_warn_border;
-        .icon {
+        :global(.icon) {
             color: $message_warn_icon_color;
         }
     }
@@ -136,7 +96,7 @@ $message_err_border: 1px solid darken($message_err_bgc, 10%);
         background-color: $message_err_bgc;
         box-shadow: $message_err_bxsd;
         border: $message_err_border;
-        .icon {
+        :global(.icon) {
             color: $message_err_icon_color;
         }
     }

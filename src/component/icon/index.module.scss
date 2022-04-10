@@ -1,0 +1,18 @@
+@import "../def";
+
+.icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex: none;
+    > svg {
+        @include wh(1em);
+        fill: currentColor;
+        pointer-events: none;
+    }
+}
+
+.iconBar {
+    @include aic;
+}

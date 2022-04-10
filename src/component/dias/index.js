@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import ReactDOM from "react-dom";
-import { Icon } from "./icon";
+import { Icon } from "../icon";
 import styles from "./index.module.scss";
 
 const DEF = Object.freeze({
@@ -88,27 +88,27 @@ export const message = withMessageContainer(function messageNormal({ $thisContai
 message.info = withMessageContainer(function messageInfo({ $thisContainer, msg, ...rest }) {
     rest.className = styles.info;
     return ReactDOM.render(<NormalMessage {...rest}>
-        <Icon name="#circle-info" className={styles.icon}/>{msg}
+        <Icon name="#circle-info" className="icon"/>{msg}
     </NormalMessage>, $thisContainer);
 });
 
 message.succ = withMessageContainer(function messageSucc({ $thisContainer, msg, ...rest }) {
     rest.className = styles.succ;
     return ReactDOM.render(<NormalMessage {...rest}>
-        <Icon name="#circle-check" className={styles.icon}/>{msg}
+        <Icon name="#circle-check" className="icon"/>{msg}
     </NormalMessage>, $thisContainer);
 });
 
 message.warn = withMessageContainer(function messageWarn({ $thisContainer, msg, ...rest }) {
     rest.className = styles.warn;
     return ReactDOM.render(<NormalMessage {...rest}>
-        <Icon name="#circle-exclamation" className={styles.icon}/>{msg}
+        <Icon name="#circle-exclamation" className="icon"/>{msg}
     </NormalMessage>, $thisContainer);
 });
 
 message.error = withMessageContainer(function messageError({ $thisContainer, msg, ...rest }) {
     rest.className = styles.error;
     return ReactDOM.render(<NormalMessage {...rest}>
-        <Icon name="#circle-xmark" className={styles.icon}/>{msg}
+        <Icon name="#circle-xmark" className="icon"/>{msg}
     </NormalMessage>, $thisContainer);
 });

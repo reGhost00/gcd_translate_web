@@ -1,0 +1,54 @@
+@import "../_def";
+
+$message_bgc: #fff;
+$message_border_color: #aaa;
+$message_border: 1px solid $message_border_color;
+$message_padding: 5px;
+$message_lh: 1.5;
+$message_bdrs: 2px;
+
+$message_arrow_wh: 10px;
+
+$message_outer_padding: $message_arrow_wh 0 0;
+$message_outer_border: $message_arrow_wh solid transparent;
+
+.input_with_message {
+    position: relative;
+}
+
+.message_outer {
+    position: absolute;
+    z-index: 9;
+    padding: $message_outer_padding;
+    overflow: hidden;
+    &::after,
+    &::before {
+        position: absolute;
+        left: 10px;
+        display: block;
+        content: "";
+        border: $message_outer_border;
+    }
+    &::before {
+        top: -10px;
+        border-bottom-color: $message_border_color;
+        z-index: 1;
+    }
+    &::after {
+        top: -9px;
+        border-bottom-color: #fff;
+        z-index: 2;
+    }
+}
+
+.message_inner {
+    display: flex;
+    align-items: center;
+    background-color: $message_bgc;
+    border: $message_border;
+    border-radius: $message_bdrs;
+    padding: $message_padding;
+    pre {
+        line-height: $message_lh;
+    }
+}

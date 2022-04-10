@@ -16,7 +16,7 @@ input, textarea, button, select{
     box-sizing: border-box !important;
 }
 
-body, html, p, ul, ol, input, h1, h2, h3, h4, h5, h6, textarea, select{
+body, html, pre, p, ul, ol, input, h1, h2, h3, h4, h5, h6, textarea, select{
     @include mp;
 }
 

@@ -86,6 +86,7 @@ export const Context = React.createContext({});
 
 export function DataAdapter({ children }) {
     /** @type {TDataAdapterState} */
+    
     const state = hookGetState({ loading: null, data: null, currFolder: null });
     useEffect(() => {
         state.loading = { tree: "/", path: "" };
@@ -97,8 +98,6 @@ export function DataAdapter({ children }) {
             }
             newState.data.kvs["/"] = newState.currFolder;
             hookSetState(state, newState);
-
-
         });
     }, []);
 
