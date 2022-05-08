@@ -1,6 +1,6 @@
 @import "../def";
 
-$treeItem_height: 2rem;
+$treeItem_height: $sub_item_height;
 $treeItem_padding:0 0 0 calc(1rem * var(--LEVEL) + 10px);
 
 $treeItem_title_padding: 0 10px;
@@ -11,7 +11,7 @@ $treeItem_active_hover_bgc: $row_hover_bgc;
 
 $treeItem_editing_bgc: #fffc;
 $treeItem_editing_input_margin: 0 0 0 5px;
-$treeItem_editing_input_padding: 0 5px ; // 0 4em 0 5px;
+$treeItem_editing_input_padding: 0 4rem 0 5px; // 0 4em 0 5px;
 
 $actionGroup_hover_bgc: lighten($treeItem_hover_bgc, 5%);
 
@@ -74,25 +74,28 @@ $actionGroup_hover_bgc: lighten($treeItem_hover_bgc, 5%);
     }
 }
 
+.treeItem_item_create,
 .treeItem_item_input {
     @include hh($treeItem_height);
+    display: block;
     position: relative;
-    padding: $treeItem_editing_input_padding;
     flex: auto;
+    input {
+        @include wh;
+        padding: $treeItem_editing_input_padding;
+    }
 }
 
-// .treeItem_item_editing input {
-//     margin: $treeItem_editing_input_margin;
-//     flex: auto;
-// }
+.treeItem_item_input {
+    padding: $treeItem_editing_input_margin;
+}
 
-// .treeItem_item_create input {
-//     width: 100%;
-// }
-
+.actionGroup_icon,
 .treeItem_item_icon {
+    @include mp;
     flex:   none;
     color:  $tree_icon_color;
+    font-size: $icon_fsz;
 }
 
 .treeItem_item_title {
@@ -102,11 +105,9 @@ $actionGroup_hover_bgc: lighten($treeItem_hover_bgc, 5%);
 
 .actionGroup_icon {
     @include wh(1.5em);
-    @include mp;
-    @include cc($tree_icon_color, transparent);
     border: 0;
     border-radius: 2px;
-    flex: none;
+    background-color: transparent;
     &:hover {
         @include cc($tree_icon_hover_color, $actionGroup_hover_bgc);
     }

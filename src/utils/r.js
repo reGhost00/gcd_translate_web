@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { hofGetDOMValue } from './c';
 
 const HOOK = Symbol('hook私有属性');
 
@@ -47,4 +48,13 @@ export function hookSetState(target, state) {
     }
     else
         throw new Error('hookSetState() 参数错误');
-  }
+}
+
+export function hofFormBindValue({ state, key, cbn="onChange", hof=hofGetDOMValue, ...rest }) {
+    if (Reflect.has(state, HOOK) && Reflect.has(state, key))
+        return {
+            value: state[key],
+            [cbn]: hof(v => state[key] = v)
+        };
+    throw new Error("hofFormBindValue() 参数错误");
+}

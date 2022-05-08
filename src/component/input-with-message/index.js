@@ -39,6 +39,13 @@ export default function InputWithMessage({ message, messageType, containerClassN
         succ: <Icon name="#circle-exclamation" className={styles.icon} />,
         error: <Icon name="#circle-xmark" className={styles.icon} />
     }[messageType] || null;
+    rest.onKeyPress = (fn => e => {
+        if ("function" === typeof fn)
+            fn(e);
+        if ("Enter" === e.key)
+            e.target.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
+    })(rest.onKeyPress);
+
     return <label className={`${styles.input_with_message} ${containerClassName || ""}`}>
         <input {...rest}/>
         {message && <div className={`${styles.message_outer} ${messageType || ""}`} ref={setMessageObserver}>

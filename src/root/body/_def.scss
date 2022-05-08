@@ -1,8 +1,8 @@
 @import "../def";
 
-$tree_width: 21rem;
-$tree_min_width: 17rem;
-$tree_max_width: 29rem;
+$tree_width: 29rem;
+$tree_min_width: 23rem;
+$tree_max_width: 37rem;
 $tree_bgc:  darken($normal_bgc, 3%);
 
 $resize_toggle_width: 3px;
@@ -12,8 +12,9 @@ $resize_toggle_bgc_active: #559;
 
 $sub_header_height: 3rem;
 $sub_body_height: calc($body_height - $sub_header_height);
+$sub_item_height: 2.5rem;
 
-$icon_fsz: 15px;
+$icon_fsz: 16px;
 $icon_color: #aaa;
 $icon_hover_color: #88c;
 $icon_hover_bgc: #ddd;
