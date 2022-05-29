@@ -1,52 +1,34 @@
-import React, { useRef } from "react";
+import React from "react";
 import { Icon } from "component/icon";
 import styles from "./index.module.scss";
 
 /** @typedef {"info" | "warn" | "succ" | "error"} TMessageType */
 /**
- * @typedef TInputWithMessageArgs 
+ * @typedef TInputWithMessageArgs
  * @property {string} message
  * @property {TMessageType} messageType
  * @property {string} containerClassName
- * 
+ *
  */
 /**
- * 
- * @param {TInputWithMessageArgs} props 
+ *
+ * @param {TInputWithMessageArgs} props
  */
 export default function InputWithMessage({ message, messageType, containerClassName, children, ...rest }) {
-    const refs = {
-        $messageOuter: useRef(null),
-        observer: useRef(null)
-    }
-    function setMessageObserver(tar) {
-        if (tar instanceof HTMLElement && message) {
-            if (refs.observer.current instanceof IntersectionObserver)
-                refs.observer.current.disconnect();
-            refs.observer.current = new IntersectionObserver(function cbIntersectionObserver([target]) {
-                console.log('cb', target)
-            });
-            refs.observer.current.observe(tar);
-        } else if (refs.observer.current instanceof IntersectionObserver) {
-            refs.observer.current.disconnect();
-            refs.observer.current = null;
-        }
-        refs.$messageOuter.current = tar
-    }
-    const $icon = {
+    const $icon = message && ({
         info: <Icon name="#circle-info" className={styles.icon} />,
         warn: <Icon name="#circle-exclamation" className={styles.icon} />,
         succ: <Icon name="#circle-exclamation" className={styles.icon} />,
         error: <Icon name="#circle-xmark" className={styles.icon} />
-    }[messageType] || null;
-    return <label className={`${styles.input_with_message} ${containerClassName || ""}`}>
+    }[messageType] || null);
+    const $messageInner = message && ($icon ? <div className={`${styles.message_inner} withIcon`}>
+        {$icon}
+        <div className={styles.message_inner}>{message}</div>
+    </div> : <div className={styles.message_inner}>{message}</div>);
+    const $messageOuter = $messageInner && <div className={`${styles.message_outer} ${messageType}`}>{$messageInner}</div>;
+    return <label className={`${styles.input_with_message} ${containerClassName}`}>
         <input {...rest}/>
-        {message && <div className={`${styles.message_outer} ${messageType || ""}`} ref={setMessageObserver}>
-            <div className={styles.message_inner}>
-                {$icon}
-                <pre>{message}</pre>
-            </div>
-        </div>}
+        {$messageOuter}
         {children}
     </label>;
 }

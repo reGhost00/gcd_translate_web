@@ -11,7 +11,7 @@ $treeItem_active_hover_bgc: $row_hover_bgc;
 
 $treeItem_editing_bgc: #fffc;
 $treeItem_editing_input_margin: 0 0 0 5px;
-$treeItem_editing_input_padding: 0 5px ; // 0 4em 0 5px;
+$treeItem_editing_input_padding: 0 0 0 5px ; // 0 4em 0 5px;
 
 $actionGroup_hover_bgc: lighten($treeItem_hover_bgc, 5%);
 
@@ -79,6 +79,10 @@ $actionGroup_hover_bgc: lighten($treeItem_hover_bgc, 5%);
     position: relative;
     padding: $treeItem_editing_input_padding;
     flex: auto;
+    input {
+        @include wh;
+        padding: 0 3.5em 0 5px;
+    }
 }
 
 // .treeItem_item_editing input {

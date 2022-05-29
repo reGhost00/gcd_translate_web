@@ -1,22 +1,21 @@
 @import "../_def";
 
-$message_bgc: #fff;
-$message_border_color: #aaa;
-$message_border: 1px solid $message_border_color;
-$message_padding: 5px;
-$message_lh: 1.5;
-$message_bdrs: 2px;
-
 $message_arrow_wh: 10px;
 
 $message_outer_padding: $message_arrow_wh 0 0;
 $message_outer_border: $message_arrow_wh solid transparent;
 
+$message_inner_padding: 5px 10px;
+$message_inner_lh: 1.5;
+$message_inner_border: 1px solid;
+$message_inner_bdrs: 3px;
 .input_with_message {
     position: relative;
 }
 
 .message_outer {
+    --MSG_BC: #aaa;
+    --MSG_BGC: #fff;
     position: absolute;
     z-index: 9;
     padding: $message_outer_padding;
@@ -31,24 +30,55 @@ $message_outer_border: $message_arrow_wh solid transparent;
     }
     &::before {
         top: -10px;
-        border-bottom-color: $message_border_color;
+        border-bottom-color: var(--MSG_BC);
         z-index: 1;
     }
     &::after {
         top: -9px;
-        border-bottom-color: #fff;
+        border-bottom-color: var(--MSG_BGC);
         z-index: 2;
+    }
+    &:global(.info) {
+        --MSG_BC: #99c;
+        --MSG_BGC: #eef;
+    }
+    &:global(.succ) {
+        --MSG_BC: #9c9;
+        --MSG_BGC: #efe;
+    }
+    &:global(.warn) {
+        --MSG_BC: #cc9;
+        --MSG_BGC: #ffe;
+    }
+    &:global(.error) {
+        --MSG_BC: #c99;
+        --MSG_BGC: #fee;
     }
 }
 
 .message_inner {
-    display: flex;
-    align-items: center;
-    background-color: $message_bgc;
-    border: $message_border;
-    border-radius: $message_bdrs;
-    padding: $message_padding;
-    pre {
-        line-height: $message_lh;
+    background-color: var(--MSG_BGC);
+    border: $message_inner_border;
+    border-color: var(--MSG_BC);
+    border-radius: $message_inner_bdrs;
+    white-space: pre;
+    padding: $message_inner_padding;
+    line-height: $message_inner_lh;
+    &:global(.withIcon) {
+        display: flex;
+        align-items: center;
+        padding: 0;
+        overflow: hidden;
     }
+    >.message_inner {
+        border: 0;
+        padding: 5px 10px 5px 0;
+    }
+}
+
+.icon {
+    font-size: 1.5rem;
+    width: 2em;
+    text-align: center;
+    color: var(--MSG_BC);
 }

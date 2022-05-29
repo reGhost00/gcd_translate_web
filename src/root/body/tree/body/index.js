@@ -81,6 +81,7 @@ function TreeItem(props) {
             placeholder: "请输入新文件夹名",
             containerClassName: styles.treeItem_item_input,
             message: state.message,
+            messageType: "warn",
             onChange:hofGetDOMValue(function onFolderNameChange(folderName) {
                 const message = /[\\/:*?"<>|]/.test(folderName) && `文件名不能包含下列任何字符\n\\ / : * ? " < > |`;
                 if (message)
