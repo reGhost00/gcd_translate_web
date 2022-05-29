@@ -1,0 +1,28 @@
+@import "../def";
+
+$listItem_height: $sub_item_height;
+
+.listItem {
+    height: $listItem_height;
+    display: flex;
+}
+
+.listItem_item {
+    @extend .item;
+    >:global(.text) {
+        @include ovf;
+    }
+    &:global(.idx) {
+        width: $item_idx_width;
+        justify-content: center;
+    }
+    &:global(.name) {
+        // 文件名
+        width:  var(--NAME_WIDTH);
+        
+    }
+    &:global(.size) {
+        // 文件大小
+        width:  var(--SIZE_WIDTH);
+    }
+}

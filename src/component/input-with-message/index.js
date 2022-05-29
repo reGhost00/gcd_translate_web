@@ -20,13 +20,15 @@ export default function InputWithMessage({ message, messageType, containerClassN
         warn: <Icon name="#circle-exclamation" className={styles.icon} />,
         succ: <Icon name="#circle-exclamation" className={styles.icon} />,
         error: <Icon name="#circle-xmark" className={styles.icon} />
-    }[messageType] || null);
-    const $messageInner = message && ($icon ? <div className={`${styles.message_inner} withIcon`}>
-        {$icon}
-        <div className={styles.message_inner}>{message}</div>
-    </div> : <div className={styles.message_inner}>{message}</div>);
-    const $messageOuter = $messageInner && <div className={`${styles.message_outer} ${messageType}`}>{$messageInner}</div>;
-    return <label className={`${styles.input_with_message} ${containerClassName}`}>
+    }[messageType] || null;
+    rest.onKeyPress = (fn => e => {
+        if ("function" === typeof fn)
+            fn(e);
+        if ("Enter" === e.key)
+            e.target.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
+    })(rest.onKeyPress);
+
+    return <label className={`${styles.input_with_message} ${containerClassName || ""}`}>
         <input {...rest}/>
         {$messageOuter}
         {children}

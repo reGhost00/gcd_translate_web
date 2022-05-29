@@ -1,0 +1,12 @@
+@import "../def";
+
+$item_idx_width: 3rem;
+$item_padding: 0 5px;
+
+.item {
+    @include ovf;
+    height: $sub_item_height;
+    display: inline-flex;
+    align-items: center;
+    padding: $list_item_padding;
+}

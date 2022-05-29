@@ -5,6 +5,7 @@ import { hookGetState } from "utils/r";
 import { deepFreeze, getReadableSize, isNotNullArray } from "utils/c";
 import styles from "./index.module.scss";
 import { Icon } from "component/icon";
+import ListItem from "./list-item";
 
 /** @typedef {import("root/data-adapter.js").TTreeItem} TTreeItem */
 
@@ -48,7 +49,8 @@ export default function ListBody() {
         vars:           [null, "--NAME_WIDTH", "--SIZE_WIDTH"]
     };
     function listRender() {
-        return isNotNullArray(currFolder?.children) && currFolder.children.reduce((prev, curr, idx) => {
+        const list = isNotNullArray(currFolder?.children) && currFolder.children.reduce((prev, curr) => {
+            /*
             if (curr.size) {
                 const fileSuffix = curr.name.split('.').pop().toLowerCase();
                 const checkboxAttr = {
@@ -76,15 +78,20 @@ export default function ListBody() {
                     <li className={`${styles.list_item} size`}>{getReadableSize(curr.size)}</li>
                 </ul>);
             }
+            */
+            if (curr.size) {
+                prev.push(<ListItem key={curr.path} idx={prev.length + 1} {...curr}/>)
+            }
             return prev;
         }, []);
+        return <div className={styles.list}>{list}</div>;
     }
     return <div className={styles.body} ref={refs.$}>
         <HorizontalResizeParent {...attrResize}>
-            <span className={`${styles.list_item} idx`}>#</span>
-            <span className={`${styles.list_item} name`}>文件名</span>
-            <span className={`${styles.list_item} size`}>大小</span>
+            <span className={`${styles.header_item} idx`}>#</span>
+            <span className={`${styles.header_item} name`}>文件名</span>
+            <span className={`${styles.header_item} size`}>大小</span>
         </HorizontalResizeParent>
-        <div className={styles.list}>{listRender()}</div>
+        {listRender()}
     </div>
 }
