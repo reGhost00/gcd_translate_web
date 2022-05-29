@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { message } from "component/dias";
-import { noThrowWrap, fetchDataReceiver, isNotNullArray } from "utils/c";
+import { noThrowWrap, isNotNullArray, xhr } from "utils/c";
 import { hookGetState, hookSetState } from "utils/r";
 
 /**
@@ -25,7 +25,7 @@ const network = {
      */
     async getFileList(path="/") {
         /** @type {[null | Error, TGCDFileItem[]]} */
-        const [err, rev] = await noThrowWrap(fetchDataReceiver(fetch(`/list?path=${path}`)));
+        const [err, rev] = await noThrowWrap(xhr(`/list?path=${path}`));
         if (err)
             message.error(`请求列表失败 ${err}`);
         return rev || null;
@@ -86,7 +86,7 @@ export const Context = React.createContext({});
 
 export function DataAdapter({ children }) {
     /** @type {TDataAdapterState} */
-    
+
     const state = hookGetState({ loading: null, data: null, currFolder: null });
     useEffect(() => {
         state.loading = { tree: "/", path: "" };

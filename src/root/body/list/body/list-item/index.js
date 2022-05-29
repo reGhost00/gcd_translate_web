@@ -36,7 +36,7 @@ export default function ListItem(props) {
     const itemIcon = useMemo(() => {
         const suffix = props.name?.split(".").pop().toLowerCase();
         const iconName = DEF.fileIcon[suffix] || "#file";
-        return <Icon name={iconName} />; 
+        return <Icon name={iconName} className={styles.listItem_icon} />;
     }, [props.name]);
     const itemSize = useMemo(() => getReadableSize(props.size), [props.size]);
 

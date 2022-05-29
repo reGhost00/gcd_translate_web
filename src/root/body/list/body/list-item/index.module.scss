@@ -11,6 +11,9 @@ $listItem_height: $sub_item_height;
     @extend .item;
     >:global(.text) {
         @include ovf;
+        @include hh(2em);
+        display: inline-block;
+        padding: 0 5px;
     }
     &:global(.idx) {
         width: $item_idx_width;
@@ -19,10 +22,14 @@ $listItem_height: $sub_item_height;
     &:global(.name) {
         // 文件名
         width:  var(--NAME_WIDTH);
-        
+
     }
     &:global(.size) {
         // 文件大小
         width:  var(--SIZE_WIDTH);
     }
+}
+
+.listItem_icon {
+    font-size: 16px;
 }

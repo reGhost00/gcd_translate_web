@@ -20,7 +20,12 @@ export default function InputWithMessage({ message, messageType, containerClassN
         warn: <Icon name="#circle-exclamation" className={styles.icon} />,
         succ: <Icon name="#circle-exclamation" className={styles.icon} />,
         error: <Icon name="#circle-xmark" className={styles.icon} />
-    }[messageType] || null;
+    }[messageType] || null);
+    const $messageInner = message && ($icon ? <div className={`${styles.message_inner} withIcon`}>
+        {$icon}
+        <div className={styles.message_inner}>{message}</div>
+    </div> : <div className={styles.message_inner}>{message}</div>);
+    const $messageOuter = $messageInner && <div className={`${styles.message_outer} ${messageType}`}>{$messageInner}</div>;
     rest.onKeyPress = (fn => e => {
         if ("function" === typeof fn)
             fn(e);
