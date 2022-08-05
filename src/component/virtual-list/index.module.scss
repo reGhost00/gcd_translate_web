@@ -1,0 +1,6 @@
+@import "../_def";
+
+.virtualList {
+    overflow: auto;
+    height: calc(100% - 35px);
+}

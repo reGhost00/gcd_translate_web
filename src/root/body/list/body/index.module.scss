@@ -13,10 +13,11 @@ $list_item_idx_width: 40px;
 }
 
 // .header,
-// .list_row {
-//     display: flex;
-//     align-items: center;
-// }
+.list_row {
+    display: flex;
+    align-items: center;
+    height: 35px;
+}
 
 .header {
     display: flex;

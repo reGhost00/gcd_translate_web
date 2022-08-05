@@ -6,6 +6,7 @@ import { deepFreeze, getReadableSize, isNotNullArray } from "utils/c";
 import styles from "./index.module.scss";
 import { Icon } from "component/icon";
 import ListItem from "./list-item";
+import { VirtualList } from "component/virtual-list";
 
 /** @typedef {import("root/data-adapter.js").TTreeItem} TTreeItem */
 
@@ -92,6 +93,16 @@ export default function ListBody() {
             <span className={`${styles.header_item} name`}>文件名</span>
             <span className={`${styles.header_item} size`}>大小</span>
         </HorizontalResizeParent>
-        {listRender()}
+        {/* {listRender()} */}
+        <VirtualList rowHeight="35" data={currFolder?.children}>
+            {function render({ index }) {
+                const item = currFolder.children[index];
+                return <ul key={item.path} className={styles.list_row}>
+                    <li className={`${styles.list_item} idx`}>{index + 1}</li>
+                    <li className={`${styles.list_item} name`}>{item.name}</li>
+                    <li className={`${styles.list_item} size`}>{getReadableSize(item.size)}</li>
+                </ul>
+            }}
+        </VirtualList>
     </div>
 }
