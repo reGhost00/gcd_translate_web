@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { message } from "component/dias";
 import { noThrowWrap, isNotNullArray, xhr } from "utils/c";
 import { hookGetState, hookSetState } from "utils/r";
@@ -278,4 +278,27 @@ export function DataAdapter({ children }) {
     return <Context.Provider value={value}>
         {children}
     </Context.Provider>;
+}
+
+/**
+ * @typedef TDataAdapterContext
+ * @property loading
+ */
+
+export const DataAdapterContext = React.createContext({});
+/**
+ * 数据层
+ * @param {React.FC<TDataAdapterContext>} Com
+ */
+export default function withDataAdapter(Com) {
+    return function DataAdapterWrap(props) {
+        const refs = {
+            ab: useRef(new AbortController()),
+            ev: useRef(new EventTarget())
+        };
+        const state = useState({ reading: false, writing: false, targetPath: "" });
+        useEffect(() => {}, []);
+        const value = {};
+        return React.createElement(DataAdapterContext.Provider, { value }, React.createElement(Com, { ...props, value }));
+    }
 }

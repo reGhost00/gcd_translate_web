@@ -121,7 +121,7 @@ export function deepFreeze(obj) {
  * @property {EventTarget} [abortEventTarget] 用于取消请求 */
 /** XHR封装
  * @param {string} url
- * @param {TXHROpt} opt
+ * @param {TXHROpt} [opt]
  */
 export function xhr(url, opt) {
     if ("string" === typeof url && url) {
