@@ -302,3 +302,15 @@ export default function withDataAdapter(Com) {
         return React.createElement(DataAdapterContext.Provider, { value }, React.createElement(Com, { ...props, value }));
     }
 }
+
+///delete
+///create { path }
+// post Content-Type: application/x-www-form-urlencoded; charset=UTF-8
+
+///upload
+// { path, files[] }
+//multipart/form-data;
+
+
+///move
+//{ oldPath newPath }
