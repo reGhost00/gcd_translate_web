@@ -110,6 +110,20 @@ export function deepFreeze(obj) {
         return obj;
 }
 
+export function classNamesGenerator(...classNames) {
+    const res = [];
+    for (const val of classNames) {
+        if ("string" === typeof val && val)
+            res.push(val);
+        else if ("[object Object]" === Object.prototype.toString.call(val)) {
+            for (const key in val) {
+                if (val[key])
+                    res.push(key);
+            }
+        }
+    }
+    return res.join(" ");
+}
 
 /** @typedef {"POST" | "GET" | "PUT" | "DELETE"} TXHRMethod */
 /**

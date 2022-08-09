@@ -1,9 +1,8 @@
 @import "./def";
 
-$list_header_height: 2.5rem;
-$list_row_height: 2rem;
+// $list_header_height: 2.5rem;
+// $list_row_height: 2rem;
 
-$list_item_idx_width: 40px;
 
 .body {
     @extend .sub_body;
@@ -12,17 +11,26 @@ $list_item_idx_width: 40px;
     --SIZE_WIDTH: 131px;
 }
 
-// .header,
-.list_row {
-    display: flex;
-    align-items: center;
-    height: 35px;
+.list {
+    height: calc($sub_body_height - $row_height);
 }
 
+// .header,
+// .list_row {
+//     display: flex;
+//     align-items: center;
+//     height: $row_height;
+//     &:global(.SCROLLING) {
+//         background-color: #3cc;
+//     }
+// }
+
 .header {
+    @include hh($sub_item_height);
     display: flex;
-    height: $sub_item_height;
-    box-shadow: inset 0 -2px 2px -2px #999;
+    align-items: center;
+    border-bottom: 2px solid #ccc;
+    overflow: hidden;
 }
 
 .header_toggle {
@@ -54,11 +62,13 @@ $list_item_idx_width: 40px;
 }
 
 .header_item {
-    @extend .item;
+    // @extend .item;
+    @include ovf;
+    padding: $item_padding;
     &:global(.idx) {
         // 序号 & 选择框
         justify-content: center;
-        width: $list_item_idx_width;
+        width: $item_idx_width;
         > [type="checkbox"] {
             display: none;
         }

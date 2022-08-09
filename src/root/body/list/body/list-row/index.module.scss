@@ -1,0 +1,25 @@
+@import "../def";
+
+.list_row,
+.list_item {
+    @include aic;
+    height: $row_height;
+}
+
+.list_row:hover {
+    background-color: #ccf;
+}
+
+.list_item {
+    @include ovf;
+    padding: $item_padding;
+    &:global(.idx) {
+        width: $item_idx_width;
+    }
+    &:global(.name) {
+        width: var(--NAME_WIDTH);
+    }
+    &:global(.size) {
+        width: var(--SIZE_WIDTH);
+    }
+}
