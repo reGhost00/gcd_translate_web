@@ -129,30 +129,45 @@ export function classNamesGenerator(...classNames) {
 /**
  * XHR 额外参数
  * @typedef TXHROpt
- * @property {TXHRMethod} method
- * @property header
- * @property body */
+ * @property {TXHRMethod} [method]
+ * @property [header]
+ * @property [body]
+ * @property {EventTarget} [abortEventTarget] 用于取消请求 */
 /** XHR封装
  * @param {string} url
- * @param {TXHROpt} opt
+ * @param {TXHROpt} [opt]
  */
 export function xhr(url, opt) {
     if ("string" === typeof url && url) {
         return new Promise((resolve, reject) => {
-            const { method = "GET", header = null, body = null } = opt || {};
+            const { method = "GET", header = null, body = null, abortEventTarget = null } = opt || {};
             const hkvs = "[object Object]" === Object.prototype.toString.call(header) ? Object.entries(header) : [];
             const req = new XMLHttpRequest();
             req.open(method.toLocaleUpperCase(), url);
-            req.responseType = 'json';
+            req.responseType = "json";
             req.setRequestHeader("accept", "application/json, text/javascript, */*;");
             for (const [name, value] of hkvs)
                 req.setRequestHeader(name, value);
-            req.onload = function onXHRLoad() {
-                resolve(req.response);
-            };
+
             req.onerror = function onXHRError() {
                 const { status, statusText, readyState } = req;
                 reject({ status, statusText, readyState });
+            }
+            if (abortEventTarget instanceof EventTarget) {
+                function abort() {
+                    req.abort();
+                    reject("ABORT");
+                }
+                abortEventTarget.addEventListener("ABORT", abort, { once: true });
+                req.onload = function onXHRLoad() {
+                    abortEventTarget.removeEventListener("ABORT", abort);
+                    resolve(req.response);
+                };
+            }
+            else {
+                req.onload = function onXHRLoad() {
+                    resolve(req.response);
+                };
             }
             req.send(body);
         });
