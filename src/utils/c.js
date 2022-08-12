@@ -110,6 +110,11 @@ export function deepFreeze(obj) {
         return obj;
 }
 
+/**
+ * 生成className
+ * @param  {...(string | { [name: string]: boolean })} classNames
+ * @returns {string}
+ */
 export function classNamesGenerator(...classNames) {
     const res = [];
     for (const val of classNames) {
@@ -124,6 +129,123 @@ export function classNamesGenerator(...classNames) {
     }
     return res.join(" ");
 }
+
+/**
+ * 获取固定长度数组
+ * @template T
+ * @template {{ length: number, push(v: T): R, [i: number]: T }} R
+ * @param {number} len
+ * @param  {...T} args
+ * @returns {R}
+ */
+export function getFixArray(len, ...args) {
+    const tar = Object.defineProperties(Object.create(null), {
+        length: {
+            value: len * 1,
+            enumerable: true
+        },
+        push: {
+            enumerable: true,
+            value(v) {
+                for (let i = this.length; i; i--) {
+                    this[i - 1] = this[i - 2];
+                }
+                this[0] = v;
+                return this;
+            }
+        },
+        [Symbol.iterator]: {
+            enumerable: true,
+            *value() {
+                for (let i = 0; i < this.length; i++) {
+                    yield this[i];
+                }
+            }
+        }
+    });
+
+    if (Number.isNaN(tar.length) || tar.length <= 0) {
+      throw new Error('getFixArray() 参数错误');
+    }
+    for (let i = 0; i < tar.length; i++) {
+      tar[i] = args[i];
+    }
+    return Object.seal(tar);
+}
+
+/**
+ * 绑定this
+ * @template T, R
+ * @template {unknown[]} A
+ * @template {{ [name: string]: (this: T, ...args: A) => R }} FNS
+ * @param {T} host
+ * @param {FNS} fnKVs
+ * @returns {FNS}
+ */
+export function functionBindThisObject(host, fnKVs) {
+    if (Object.prototype.toString.call(host) === '[object Object]' && Object.prototype.toString.call(fnKVs) === '[object Object]') {
+        const fns = Object.keys(fnKVs);
+        for (const fn of fns) {
+            if (typeof fnKVs[fn] === 'function') {
+                fnKVs[fn] = fnKVs[fn].bind(host);
+            }
+        }
+      return fnKVs;
+    }
+    throw new Error('functionBindThisObject() 参数错误');
+}
+
+export const MathEx = {
+    /**
+     * 正态分布
+     * @param {number} avg μ 平均值
+     * @param {number} std σ 标准差
+     * @return {number} N(μ, σ^2)
+     * */
+    normalDistribution(avg, std) {
+        // box-muller polar
+        // https://en.wikipedia.org/wiki/Box%E2%80%93Muller_transform
+        return avg + std * Math.sqrt(-2 * Math.log(1 - Math.random())) * Math.cos(2 * Math.PI * Math.random());
+    },
+    /** 正态分布 + 范围采样
+     * @param {number} avg μ 平均值
+     * @param {number} std σ 标准差
+     * @param {number} offset 允许偏移值
+     * @return {number} N(μ, σ^2) ∈ (μ - offset, μ + offset)
+    */
+    normalDistributionWithRangeSample(avg, std, offset) {
+        const min = avg - offset;
+        const max = avg + offset;
+        let val = MathEx.normalDistribution(avg, std);
+        while (min > val || max < val) {
+            val = MathEx.normalDistribution(avg, std);
+        }
+        return val;
+    },
+    /** 线性分布
+     * @param {number} min
+     * @param {number} max
+     * @return {number}
+     */
+    uniformDistribution(min, max) {
+        return Math.random() * (max - min) + min;
+    },
+    /** 累加
+     * @param {...number} v
+     * @return {number}
+     */
+    add(...v) {
+        return v.reduce((p, c) => (p + c) * 1);
+    },
+    /** 累乘
+     * @param {...number} v
+     * @return {number}
+     */
+    times(...v) {
+        return v.reduce((p, c) => p * c);
+    }
+};
+
 
 /** @typedef {"POST" | "GET" | "PUT" | "DELETE"} TXHRMethod */
 /**

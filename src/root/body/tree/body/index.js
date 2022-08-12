@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from "react";
 import { Icon, IconBar } from "component/icon";
-import { Context as DataContext } from "root/data-adapter";
+import { DataAdapterContext } from "root/data-adapter";
 import { deepFreeze, hofCallContinue, hofCallWithCondition, hofDOMClassFilter, hofGetDOMValue, isNotNullArray } from "utils/c";
 import styles from "./index.module.scss";
 import { hofFormBindValue, hookGetState, hookSetState } from "utils/r";
@@ -70,14 +70,14 @@ function TreeItemCreate(props) {
  * @param {TTreeItemArgs & TTreeItem} props
  */
 function TreeItem(props) {
-    const { currFolder } = useContext(DataContext);
+    // const { currFolder } = useContext(DataContext);
     const state = hookGetState({ folderName: '', message: null });
     useEffect(() => {
         state.folderName = props.editing ? props.name : "";
     }, [props.editing]);
 
-    const active = props.path && currFolder && props.path === currFolder.path;
-    const iconName = active ? "#folder-open" : "#folder";
+    // const active = props.path && currFolder && props.path === currFolder.path;
+    // const iconName = active ? "#folder-open" : "#folder";
     const itemStyle = { "--LEVEL": props.level * 1 || 0 };
     function onFolderNameSubmit() {
         if (state.folderName && state.folderName !== props.name && !/[\\/:*?"<>|]/.test(state.folderName))
@@ -113,7 +113,7 @@ function TreeItem(props) {
             })
         },
         item: !props.editing && {
-            className: `${styles.treeItem_item} ${active && "active"}`,
+            className: `${styles.treeItem_item}`,
             onClick(ev){
                 ev.preventDefault();
                 ev.stopPropagation();
@@ -122,12 +122,12 @@ function TreeItem(props) {
         }
     };
     const $item = props.editing ? <div className={styles.treeItem_item_editing}>
-        <Icon name={iconName} className={styles.treeItem_item_icon} />
+        {/* <Icon name={iconName} className={styles.treeItem_item_icon} /> */}
         <InputWithMessage {...attr.input}>
             <IconBar {...attr.iconBar}/>
         </InputWithMessage>
     </div> : <div {...attr.item}>
-        <Icon name={iconName} className={styles.treeItem_item_icon} />
+        {/* <Icon name={iconName} className={styles.treeItem_item_icon} /> */}
         <span className={styles.treeItem_item_title} title={props.name}>{props.name}</span>
         {props.actions}
     </div>;
@@ -144,7 +144,7 @@ function TreeItem(props) {
  */
 
 export default function TreeBody() {
-    const { action, data } = useContext(DataContext);
+    const { data, loading } = useContext(DataAdapterContext);
     /** @type {TTreeBodyState} */
     const state = hookGetState({ editing: null, create: null, folderName: null });
     const func = {
@@ -152,7 +152,7 @@ export default function TreeBody() {
             return !state.editing && !state.create;
         }, hofDOMClassFilter({
             rename() {
-                action.setCurrFolder(this.path);
+                // action.setCurrFolder(this.path);
                 state.editing = this.path;
             },
             move() {
@@ -160,7 +160,7 @@ export default function TreeBody() {
             },
             create() {
                 const path = this?.path || "/";
-                action.setCurrFolder(path);
+                // action.setCurrFolder(path);
                 state.create = path;
             },
             download() {
@@ -172,7 +172,7 @@ export default function TreeBody() {
         })),
         onItemClick(path) {
             if (!state.editing && !state.create) {
-                action.setCurrFolder(path || "/");
+                // action.setCurrFolder(path || "/");
             }
         },
         onActionCancel() {
@@ -229,15 +229,16 @@ export default function TreeBody() {
                 }
                 const subs = isNotNullArray(curr.children) && treeRender(curr.children, level + 1);
                 const children = [creating && <TreeItemCreate key={`${curr.path}_create`} onSubmit={func.onCreateSubmit.bind(curr)} onCancel={func.onActionCancel} />].concat(subs || []);
+                // prev.push(<li>{children}</li>)
                 prev.push(<TreeItem {...attr.item}>{children}</TreeItem>);
             }
             return prev;
         }, []);
     }
-    return <div className={`${styles.body} ${(state.create || state.editing) && "disabled"}`}>
-        <TreeItem {...attrItem}>
+    return <div className={`${styles.body} ${loading.list} ${(state.create || state.editing) && "disabled"}`}>
+        {/* <TreeItem {...attrItem}>
             {"/" === state.create && <TreeItemCreate onSubmit={func.onCreateSubmit} onCancel={func.onActionCancel}/> }
-        </TreeItem>
+        </TreeItem> */}
         {treeRender(data?.arr)}
     </div>
 }

@@ -1,9 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import { message } from "component/dias";
-import { noThrowWrap, isNotNullArray, xhr } from "utils/c";
+import { noThrowWrap, isNotNullArray, xhr, getFixArray, functionBindThisObject, MathEx } from "utils/c";
 import { hookGetState, hookSetState } from "utils/r";
 
-
+/**
+ * @template T
+ * @typedef {React.FC<T> | React.ComponentClass<T>} TReactComponent React组件
+ */
 /**
  * gcd 返回文件列表项
  * @typedef TOriginFileItem
@@ -214,13 +217,13 @@ const comm = {
  * @property {TTreeItem[]} arr
  * @property {{ length: number, [K: string]: TTreeItem }} kvs
  */
-/**
- * DataAdapter 状态
- * @typedef TDataAdapterState
- * @property {TDataAdapterStateLoading} loading
- * @property {TDataAdapterStateData} data
- * @property {TTreeItem} currFolder
- */
+// /**
+//  * DataAdapter 状态
+//  * @typedef TDataAdapterState
+//  * @property {TDataAdapterStateLoading} loading
+//  * @property {TDataAdapterStateData} data
+//  * @property {TTreeItem} currFolder
+//  */
 /**
  * @typedef TContextAction
  * @property
@@ -279,27 +282,164 @@ export function DataAdapter({ children }) {
         {children}
     </Context.Provider>;
 }
-
+const MULTI_CALL_TIMEOUT = MathEx.normalDistributionWithRangeSample(300, 30, 50);
 /**
  * @typedef TDataAdapterContext
- * @property loading
+ * @property {boolean} loading
  */
+/** @type {React.Context<TDataAdapterContext>} */
+export const DataAdapterContext = React.createContext({ loading: false });
 
-export const DataAdapterContext = React.createContext({});
 /**
- * 数据层
- * @param {React.FC<TDataAdapterContext>} Com
+ * DataAdapterWrap 状态
+ * @typedef TDataAdapterState
+ * @property {boolean} list
+ */
+/**
+ * 树数据
+ * @typedef TTreeItem
+ * @property {number} $idx 原始索引
+ * @property {TTreeItem} $parent 父级
+ * @property {string} name 文件名
+ * @property {string} path 文件路径
+ * @property {number} size 文件大小
+ * @property {TTreeItem[]} children 子级
+ */
+/**
+ * 树数据组
+ * @typedef TDataAdapterFileItem
+ * @property {TTreeItem[]} arr
+ * @property {{ [path: string]: TTreeItem }} kvs
  */
 export default function withDataAdapter(Com) {
-    return function DataAdapterWrap(props) {
-        const refs = {
-            ab: useRef(new AbortController()),
-            ev: useRef(new EventTarget())
-        };
-        const state = useState({ reading: false, writing: false, targetPath: "" });
-        useEffect(() => {}, []);
-        const value = {};
-        return React.createElement(DataAdapterContext.Provider, { value }, React.createElement(Com, { ...props, value }));
+    function fixArrayHelper(keys) {
+        if (isNotNullArray(keys)) {
+            const rev = {};
+            for (const k of keys) {
+                rev[k] = getFixArray(5, Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY);
+            }
+            return rev;
+        }
+        throw new Error('[WB_CTX] fixArrayHelper() 参数错误');
+    }
+
+    return class DataAdapterWrap extends React.Component {
+        data = {
+            ab: new AbortController(),
+            ev: new EventTarget(),
+            /** 调用次数 */
+            ct: { list: 0 },
+            /** 调用时间 */
+            ss: fixArrayHelper(["list"]),
+            /** @type {TDataAdapterFileItem} */
+            fileTree: { arr: null, kvs: null }
+        }
+        func = {
+            async attachAbort(tar) {
+                let abort = null;
+                const rev = await Promise.race([tar, new Promise((_, reject) => {
+                    abort = () => {
+                        this.data.ab.abort("ABORT");
+                        reject(new Error("ABORT"));
+                    };
+                    this.data.ev.addEventListener("ABORT", abort, { once: true });
+                })]);
+                this.data.ev.removeEventListener("ABORT", abort);
+                return rev;
+            }
+        }
+        hof = {
+            attachAbort(fn) {
+                return "function" === typeof fn && function attachAbortWrap(...args) {
+                    this.data.ab = new AbortController();
+                    return this.func.attachAbort(fn.apply(this, args));
+                }
+            },
+            loadingGuard(key, fn) {
+                return "function" === typeof fn && async function loadingGuardWrap(...args) {
+                    const stamp = performance.now();
+                    let rev = null;
+                    if ((!this.data.ss[key][0] || stamp - this.data.ss[key][0] > MULTI_CALL_TIMEOUT) && !this.state[key]) {
+                        try {
+                            this.setState(prev => ({ ...prev, [key]: true }));
+                            rev = await fn.apply(this, args);
+                        } catch (err) {
+                            this.setState(prev => ({ ...prev, [key]: false }));
+                            throw new Error(err);
+                        }
+                        this.data.ct[key] += 1;
+                        this.data.ss[key].push(stamp);
+                        this.setState(prev => ({ ...prev, [key]: false }));
+                        return rev;
+                    }
+                }
+            }
+        }
+        effect = {
+            getFileTree: this.hof.loadingGuard("list", async function getFileTree(path="/", kvs={ length: 0 }, $parent=null) {
+                const arr = await network.getFileList(path) || null;
+                const rev = { arr, kvs };
+                const len = Array.isArray(arr) && arr.length;
+                if (len) {
+                    rev.kvs.length += len;
+                    rev.kvs[path] = Object.assign(rev.kvs[path] || { $idx: 0, $parent, name: path }, { path, children: arr });
+                    for (let $idx=0; $idx<len; $idx++) {
+                        kvs[arr[$idx].path] = Object.assign(arr[$idx], { $idx, $parent: rev.kvs[path] });
+                        if (!arr[$idx].size) {
+                            const sub = await getFileTree.call(this, arr[$idx].path, kvs, arr[$idx]);
+                            arr[$idx].children = sub.arr || null;
+                            rev.kvs = Object.assign(kvs, sub.kvs);
+                        }
+                    }
+                }
+                return rev;
+            }),
+            fileTreeReceiver(path, res) {
+                if (Array.isArray(res?.arr) && res?.kvs[path]) {
+                    // if (this.data.fileTree.kvs?.[path] && this.data.fileTree.arr?.length) {
+                    //     const idxArr = (function getIdxArr(tar, arr) {
+                    //         if (tar.$idx)
+                    //             arr.unshift(tar.$idx);
+                    //         return tar.$parent?.idx ? getIdxArr(tar.$parent, arr) : arr;
+                    //     })(this.data.fileTree.kvs[path], []);
+                    //     const tar = idxArr.reduce((tar, idx) => tar.children?.[idx] || tar[idx], this.data.fileTree.arr);
+                    //     Object.assign(tar, { children: res.arr });
+                    // }
+                    // else
+                    //     this.data.fileTree.arr = res.arr;
+                    if (Array.isArray(this.data.fileTree.arr))
+                        this.data.fileTree.kvs[path] = Object.assign(this.data.fileTree.kvs[path] || { $idx: 0, $parent: null, name: path, path }, { children: res.arr });
+                    else
+                        this.data.fileTree.arr = res.arr;
+                    this.data.fileTree.kvs = Object.assign(this.data.fileTree.kvs || { length: res.arr.length }, res.kvs);
+                }
+            }
+        }
+        constructor(props) {
+            super(props);
+            /** @type {TDataAdapterState} */
+            this.state = { list: false };
+            this.func = functionBindThisObject.call(this, this, this.func);
+            this.hof = functionBindThisObject.call(this, this, this.hof);
+            this.effect = functionBindThisObject.call(this, this, this.effect);
+        }
+        componentDidMount() {
+            this.effect.getFileTree("/").then(rev => this.effect.fileTreeReceiver("/", rev));
+        }
+        render() {
+            const value = {
+                loading: this.state,
+                data: this.data.fileTree
+            };
+            return React.createElement(DataAdapterContext.Provider, { value }, React.createElement(Com, { ...this.props, value }));
+        }
+        // const refs = {
+        //     ab: useRef(new AbortController()),
+        //     ev: useRef(new EventTarget())
+        // };
+        // const state = useState({ reading: false, writing: false, targetPath: "" });
+        // useEffect(() => {}, []);
+        // const value = {};
     }
 }
 
