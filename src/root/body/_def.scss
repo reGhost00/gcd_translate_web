@@ -10,9 +10,9 @@ $resize_toggle_bgc: darken($tree_bgc, 3%);
 $resize_toggle_bgc_hover: darken($resize_toggle_bgc, 3%);
 $resize_toggle_bgc_active: #559;
 
-$sub_header_height: 3rem;
+$sub_header_height: 42px;
 $sub_body_height: calc($body_height - $sub_header_height);
-$sub_item_height: 2.5rem;
+$sub_item_height: 35px;
 
 $icon_fsz: 16px;
 $icon_color: #aaa;
@@ -27,14 +27,14 @@ $row_hover_bgc: #ddf;
 $row_active_bgc: darken($row_hover_bgc, 3%);
 $row_active_hover_bgc: darken($row_active_bgc, 3%);
 
-.sub_header {
-    @include aic;
-    height: $sub_header_height;
-}
+// .sub_header {
+//     @include aic;
+//     height: $sub_header_height;
+// }
 
-.sub_body {
-    height: $sub_body_height;
-}
+// .sub_body {
+//     height: $sub_body_height;
+// }
 
 // .icon {
 //     font-size: $icon_fsz;

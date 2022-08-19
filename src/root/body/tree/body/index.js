@@ -1,13 +1,24 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useMemo } from "react";
 import { Icon, IconBar } from "component/icon";
-import { DataAdapterContext } from "root/data-adapter";
-import { deepFreeze, hofCallContinue, hofCallWithCondition, hofDOMClassFilter, hofGetDOMValue, isNotNullArray } from "utils/c";
-import styles from "./index.module.scss";
-import { hofFormBindValue, hookGetState, hookSetState } from "utils/r";
 import InputWithMessage from "component/input-with-message";
+import { VirtualList } from "component/virtual-list";
+
+import { NetworkAdapterContext } from "root/data-adapter";
+
+import { hofFormBindValue, hookGetState, hookSetState } from "utils/r";
+import { classNamesGenerator, deepFreeze, hofCallContinue, hofCallWithCondition, hofDOMClassFilter, hofGetDOMValue, isNotNullArray } from "utils/c";
+
+import styles from "./index.module.scss";
+
 
 /** @typedef {import("root/data-adapter.js").TTreeItem} TTreeItem */
-
+/**
+ * 渲染用节点
+ * @typedef TTreeRenderItem
+ * @property {string} path
+ * @property {string} name
+ * @property {number} level
+ */
 const DEF = deepFreeze({
     rootActions: [
         { name: "#folder-plus", title: "新建文件夹", className: `${styles.actionGroup_icon} create`, nodeName: "button" },
@@ -25,6 +36,8 @@ const DEF = deepFreeze({
         { name: "#xmark", title: "取消", className: `${styles.actionGroup_icon} cancel`, nodeName: "button" }
     ]
 });
+
+const ITEM_HEIGHT = 35;
 
 function TreeItemCreate(props) {
     const state = hookGetState({ value: '', message: '' });
@@ -78,7 +91,7 @@ function TreeItem(props) {
 
     // const active = props.path && currFolder && props.path === currFolder.path;
     // const iconName = active ? "#folder-open" : "#folder";
-    const itemStyle = { "--LEVEL": props.level * 1 || 0 };
+    const itemStyle = { "--level": props.level * 1 || 0 };
     function onFolderNameSubmit() {
         if (state.folderName && state.folderName !== props.name && !/[\\/:*?"<>|]/.test(state.folderName))
             props.onEditingSubmit(state.folderName);
@@ -113,7 +126,7 @@ function TreeItem(props) {
             })
         },
         item: !props.editing && {
-            className: `${styles.treeItem_item}`,
+            className: styles.treeItem_item,
             onClick(ev){
                 ev.preventDefault();
                 ev.stopPropagation();
@@ -127,14 +140,14 @@ function TreeItem(props) {
             <IconBar {...attr.iconBar}/>
         </InputWithMessage>
     </div> : <div {...attr.item}>
-        {/* <Icon name={iconName} className={styles.treeItem_item_icon} /> */}
+        <Icon name="#folder" className={styles.treeItem_item_icon} />
         <span className={styles.treeItem_item_title} title={props.name}>{props.name}</span>
         {props.actions}
     </div>;
-    return <div style={itemStyle}>
+    return <li style={itemStyle}>
         {$item}
         {props.children}
-    </div>;
+    </li>;
 }
 
 /**
@@ -144,7 +157,7 @@ function TreeItem(props) {
  */
 
 export default function TreeBody() {
-    const { data, loading } = useContext(DataAdapterContext);
+    const { data, loading } = useContext(NetworkAdapterContext);
     /** @type {TTreeBodyState} */
     const state = hookGetState({ editing: null, create: null, folderName: null });
     const func = {
@@ -235,10 +248,55 @@ export default function TreeBody() {
             return prev;
         }, []);
     }
-    return <div className={`${styles.body} ${loading.list} ${(state.create || state.editing) && "disabled"}`}>
-        {/* <TreeItem {...attrItem}>
-            {"/" === state.create && <TreeItemCreate onSubmit={func.onCreateSubmit} onCancel={func.onActionCancel}/> }
-        </TreeItem> */}
-        {treeRender(data?.arr)}
-    </div>
+    const folders = useMemo(() => {
+        /**
+         * 树形数据转换为渲染用一维数组
+         * @param {TTreeItem[]} list
+         * @param {number} level
+         */
+        function getFolders(list, level = 0) {
+            let res = [];
+            if (isNotNullArray(list)) {
+                for (const { path, name, children, size } of list) {
+                    if (!size) {
+                        res.push({ path, name, level });
+                        if (isNotNullArray(children))
+                            res = res.concat(getFolders(children, level+1));
+                    }
+                }
+            }
+            return res;
+        }
+        return getFolders(data.arr) || [];
+    }, [data.arr]);
+    function treeItemRender({ index, scrolling }) {
+        const folder = folders[index] || null;
+        if (folder?.path && !folder.size) {
+            if (scrolling) {
+                return <li className={`${styles.treeItem_item} scrolling`} style={{ "--level": folder.level * 1 || 0 }}>
+                    <Icon name="#folder" className={styles.treeItem_item_icon}/>
+                    <span className={styles.treeItem_item_title}>{folder.name}</span>
+                </li>
+            }
+            return <TreeItem {...folder}/>;
+        }
+        return null;
+    }
+    const attr = {
+        className: classNamesGenerator(styles.list, loading.tree && "loading"),
+        rowHeight: ITEM_HEIGHT,
+        rowCount: folders.length,
+        component: {
+            inner: "ol",
+            empty() {
+                return <div className="empty">无数据</div>
+            }
+        },
+        setRowKey(idx) {
+            return folders[idx]?.path || idx;
+        }
+    };
+    return <VirtualList {...attr}>
+        {treeItemRender}
+    </VirtualList>
 }

@@ -1,6 +1,7 @@
 @import "../def";
 
 .header {
-    @extend .sub_header;
+    @include aic;
+    height: $sub_header_height;
     background-color: $listHeader_bgc;
 }

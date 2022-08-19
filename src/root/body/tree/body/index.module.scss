@@ -1,7 +1,7 @@
 @import "../def";
 
 $treeItem_height: $sub_item_height;
-$treeItem_padding:0 0 0 calc(1rem * var(--LEVEL) + 10px);
+$treeItem_padding:0 0 0 calc(15px * var(--level) + 10px);
 
 $treeItem_title_padding: 0 10px;
 
@@ -15,14 +15,16 @@ $treeItem_editing_input_padding: 0 4rem 0 5px; // 0 4em 0 5px;
 
 $actionGroup_hover_bgc: lighten($treeItem_hover_bgc, 5%);
 
-.body {
-    @extend .sub_body;
+.list {
+    height: $sub_body_height;
     overflow: hidden auto;
-    &:global(.disabled) .treeItem_item {
-        background-color: transparent;
-        .actionGroup {
-            display: none;
-        }
+    &:global(.loading) {
+        pointer-events: none;
+    }
+    >:global(.empty) {
+        @include hh($sub_item_height);
+        text-align: center;
+        color: #999;
     }
 }
 
@@ -50,6 +52,9 @@ $actionGroup_hover_bgc: lighten($treeItem_hover_bgc, 5%);
     }
     &:hover {
         background-color: $treeItem_hover_bgc;
+    }
+    &:global(.scrolling) {
+        pointer-events: none;
     }
     &:global(.active) {
         background-color: $treeItem_active_bgc;

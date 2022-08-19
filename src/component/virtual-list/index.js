@@ -35,10 +35,12 @@ const DEF_COMPONENT = {
 /**
  * 虚拟滚动
  * @component
- * @param {TVirtualListArgs}
+ * @param {TVirtualListArgs} props
  */
-export function VirtualListCore({ rowHeight=0, rowCount=0, setRowKey=null, component=DEF_COMPONENT, children, ...rest }) {
+// export function VirtualList({ datarowHeight=0, rowCount=0, setRowKey=null, component=DEF_COMPONENT, children, ...rest }) {
+export function VirtualList(props) {
     const [state, setState] = useState({ paddingTop: 0, start: 0, end: 0, scrolling: false });
+    const { rowHeight=0, rowCount=0, setRowKey=null, component=DEF_COMPONENT, children, ...rest } = props;
     const refs = {
         scrollingTM: useRef(null),
         scrollingStamp: useRef(0),
@@ -110,10 +112,10 @@ export function VirtualListCore({ rowHeight=0, rowCount=0, setRowKey=null, compo
     return React.createElement(component.outer || DEF_COMPONENT.outer, attr.outerContainer, $innerContainer);
 }
 
-export function VirtualList({ data, ...rest }) {
-    const attr = {
-        rowCount: data?.length * 1 || 0,
-        ...rest
-    };
-    return React.createElement(VirtualListCore, attr);
-}
+// export function VirtualList({ data, ...rest }) {
+//     const attr = {
+//         rowCount: data?.length * 1 || 0,
+//         ...rest
+//     };
+//     return React.createElement(VirtualListCore, attr);
+// }

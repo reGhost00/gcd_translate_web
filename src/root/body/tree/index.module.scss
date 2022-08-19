@@ -5,6 +5,9 @@
     flex: none;
     width: clamp($tree_min_width, var(--TREE_WIDTH), $tree_max_width);
     background-color: $tree_bgc;
+    &:global(.loading) {
+        pointer-events: none;
+    }
 }
 
 .loading {
@@ -12,9 +15,9 @@
     @include wh;
     z-index: 9;
     display: none;
-    &:global(.loading) {
+    &:global(.active) {
         @include abc;
-        background-color: #fff9;
+        @include cc(#55c, #fff9);
     }
     >:global(.fa-spin) {
         font-size: 2rem;

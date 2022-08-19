@@ -1,6 +1,6 @@
 import React, { useContext, useRef } from "react";
 import { HorizontalResizeParent } from "component/resize-panel";
-import { Context as DataContext } from "root/data-adapter";
+// import { Context as DataContext } from "root/data-adapter";
 import { hookGetState } from "utils/r";
 import { classNamesGenerator, deepFreeze, getReadableSize, isNotNullArray } from "utils/c";
 import styles from "./index.module.scss";
@@ -36,7 +36,8 @@ const DEF_ROW_HEIGHT = 35;
  */
 
 export default function ListBody() {
-    const { currFolder } = useContext(DataContext);
+    // const { currFolder } = useContext(DataContext);
+    const currFolder = {};
     /** @type {TListBodyState} */
     // const state = hookGetState({ currFile: null, selectedFile: [] });
 

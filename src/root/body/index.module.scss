@@ -5,6 +5,7 @@
     --LIST_WIDTH: calc(100vw - var(--TREE_WIDTH) - #{$resize_toggle_width});
     display: flex;
     height: $body_height;
+    overflow: hidden;
 }
 
 .resize_toggle {

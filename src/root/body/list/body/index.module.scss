@@ -5,7 +5,7 @@
 
 
 .body {
-    @extend .sub_body;
+    height: $sub_body_height;
     overflow: hidden;
     --NAME_WIDTH: 373px;
     --SIZE_WIDTH: 131px;

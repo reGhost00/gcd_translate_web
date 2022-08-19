@@ -7,7 +7,8 @@ $tree_header_icon_hover_color: darken($tree_icon_hover_color, 3%);
 $tree_header_icon_hover_bgc: darken($tree_icon_hover_bgc, 3%);
 
 .header {
-    @extend .sub_header;
+    @include aic;
+    height: $sub_header_height;
     background-color: $treeHeader_bgc;
 }
 
