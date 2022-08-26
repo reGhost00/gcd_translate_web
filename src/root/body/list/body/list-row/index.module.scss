@@ -1,25 +1,54 @@
 @import "../def";
 
 .list_row,
-.list_item {
+.list_item_idx,
+.list_item_name,
+.list_item_size {
     @include aic;
-    height: $row_height;
+    height: $sub_item_height;
+    &:global(.disabled) {
+        pointer-events: none;
+    }
 }
 
-.list_row:hover {
-    background-color: #ccf;
+.list_row {
+    &:hover {
+        background-color: $row_hover_bgc;
+    }
+    &:global(.active) {
+        background-color: $row_active_bgc;
+        &:hover {
+            background-color: $row_active_hover_bgc;
+        }
+    }
 }
 
-.list_item {
+.list_item_idx {
+    justify-content: center;
+    width: $item_idx_width;
+}
+
+
+.list_item_name,
+.list_item_size {
+    @include mp($item_margin, $item_padding);
+}
+
+.list_item_name > :global(.name),
+.list_item_size {
     @include ovf;
-    padding: $item_padding;
-    &:global(.idx) {
-        width: $item_idx_width;
-    }
-    &:global(.name) {
-        width: var(--NAME_WIDTH);
-    }
-    &:global(.size) {
-        width: var(--SIZE_WIDTH);
+}
+
+.list_item_name {
+    width: var(--NAME_WIDTH);
+    >:global(.icon) {
+        color: $list_icon_color;
+        font-size: $icon_fsz;
+        width: $item_icon_width;
     }
 }
+
+.list_item_size {
+    width: var(--SIZE_WIDTH);
+}
+

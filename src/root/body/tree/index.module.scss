@@ -3,8 +3,9 @@
 .tree {
     position: relative;
     flex: none;
-    width: clamp($tree_min_width, var(--TREE_WIDTH), $tree_max_width);
+    width: clamp($tree_min_width, var(--treeWidth), $tree_max_width);
     background-color: $tree_bgc;
+    overflow: hidden;
     &:global(.loading) {
         pointer-events: none;
     }

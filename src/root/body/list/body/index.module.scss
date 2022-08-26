@@ -30,7 +30,6 @@
     display: flex;
     align-items: center;
     border-bottom: 2px solid #ccc;
-    overflow: hidden;
 }
 
 .header_toggle {
@@ -67,7 +66,7 @@
     padding: $item_padding;
     &:global(.idx) {
         // 序号 & 选择框
-        justify-content: center;
+        @include abc;
         width: $item_idx_width;
         > [type="checkbox"] {
             display: none;
@@ -83,18 +82,38 @@
     }
 }
 
-// .list_row {
-//     height: $list_row_height;
-//     &:hover {
-//         background-color: $row_hover_bgc;
-//     }
-//     &:global(.selected) {
-//         background-color: $row_active_bgc;
-//         &:hover {
-//             background-color: $row_active_hover_bgc;
-//         }
-//     }
-// }
+.list_row {
+    @include aic;
+    height: $sub_item_height;
+    // &:hover {
+    //     background-color: $row_hover_bgc;
+    // }
+    // &:global(.selected) {
+    //     background-color: $row_active_bgc;
+    //     &:hover {
+    //         background-color: $row_active_hover_bgc;
+    //     }
+    // }
+}
+
+.list_row_idx {
+    @include abc;
+    width: $item_idx_width;
+}
+
+.list_row_size,
+.list_row_name {
+    @include aic;
+    @include mp(0 3px 0 0, $item_padding);
+}
+
+.list_row_name {
+    width: var(--NAME_WIDTH);
+}
+
+.list_row_size {
+    width: var(--SIZE_WIDTH);
+}
 
 .list {
     height: calc($sub_body_height - 2.5rem);

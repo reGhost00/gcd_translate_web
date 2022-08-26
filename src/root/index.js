@@ -22,9 +22,9 @@ export default withDataAdapter(function Root({ value: ctx }) {
     const value = {
         currFolder: state.currFolder,
         action: {
-            setCurrFolder(target) {
-                if (ctx.data?.kvs?.[target?.$key] && !target?.size) {
-                    console.log('folder', target)
+            setCurrFolder(currFolder) {
+                if (ctx.data?.kvs?.[currFolder?.path] && !currFolder?.size) {
+                    setState({ currFolder });
                 }
             }
         }

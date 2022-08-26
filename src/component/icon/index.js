@@ -10,7 +10,7 @@ import styles from "./index.module.scss";
  * @component
  * @param {TIconArgs} props
  */
-export function Icon({ name, nodeName="span", ...rest }) {
+export function Icon({ nodeName="span", name, ...rest }) {
     rest.className = `${styles.icon} ${rest.className || ""}`;
     return React.createElement(nodeName, rest, <svg xmlns="http://www.w3.org/2000/svg">
         <use xlinkHref={name} />

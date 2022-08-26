@@ -7,7 +7,7 @@ export default function Body() {
     const attr = {
         className:      styles.body,
         toggleClassName:styles.resize_toggle,
-        vars:           ["--TREE_WIDTH"]
+        vars:           ["--treeWidth"]
     };
     return <HorizontalResizeParent {...attr}>
         <BodyTree />

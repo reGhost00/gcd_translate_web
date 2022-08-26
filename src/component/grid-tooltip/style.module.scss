@@ -1,0 +1,57 @@
+@import "../def";
+
+$grid_row_height: 30px;
+$grid_horizontal_template_rows: $grid_row_height $grid_row_height;
+$grid_horizontal_height: $grid_row_height * 2;
+
+$item_padding: 0 5px;
+$item_border: 1px dashed #ccc;
+.grid {
+    @include mp;
+    display: grid;
+    grid-template-rows: $grid_horizontal_template_rows;
+    white-space: nowrap;
+    list-style: none;
+    &:global(.horizontal) {
+        grid-template-rows: $grid_horizontal_template_rows;
+        height: $grid_horizontal_height
+    }
+    &:global(.vertical) {
+        grid-template-rows: auto;
+        grid-template-columns: auto auto;
+    }
+}
+
+.item {
+    @include mp(0, $item_padding);
+    display: inline-flex;
+    align-items: center;
+    border-left: $item_border;
+    &:nth-child(even) {
+        border-top: $item_border;
+        grid-row-start: 2;
+    }
+}
+
+.tooltipWrap {
+    position: relative;
+    &:hover .tooltipWrap_inner {
+        display: block;
+    }
+}
+
+.tooltipWrap_inner {
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    z-index: 9;
+    padding: 5px;
+    display: none;
+    background-color: #fffc;
+    &:global(.horizontal) {
+        height: 70px;
+    }
+    &:global(.vertical) {
+        min-width: 100px;
+    }
+}

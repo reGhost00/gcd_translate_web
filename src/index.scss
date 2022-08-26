@@ -40,6 +40,15 @@ body, html, pre, p, ul, ol, input, h1, h2, h3, h4, h5, h6, textarea, select{
     }
 }
 
+.empty_list_item {
+    @include hh(2.5rem);
+    @include abc;
+    color: #a99;
+    text-align: center;
+    pointer-events: none;
+    user-select: none;
+}
+
 @keyframes fa-spin {
     from {
         transform: rotate(0deg);

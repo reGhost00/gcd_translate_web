@@ -1,8 +1,8 @@
 @import "./def";
 
 .body {
-    --TREE_WIDTH: #{$tree_width};
-    --LIST_WIDTH: calc(100vw - var(--TREE_WIDTH) - #{$resize_toggle_width});
+    --treeWidth: #{$tree_width};
+    --listWidth: calc(100vw - var(--treeWidth) - #{$resize_toggle_width});
     display: flex;
     height: $body_height;
     overflow: hidden;

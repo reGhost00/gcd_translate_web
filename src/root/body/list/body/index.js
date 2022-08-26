@@ -1,13 +1,14 @@
 import React, { useContext, useRef } from "react";
 import { HorizontalResizeParent } from "component/resize-panel";
-// import { Context as DataContext } from "root/data-adapter";
-import { hookGetState } from "utils/r";
-import { classNamesGenerator, deepFreeze, getReadableSize, isNotNullArray } from "utils/c";
-import styles from "./index.module.scss";
-// import { Icon } from "component/icon";
-// import ListItem from "./list-item";
 import { VirtualList } from "component/virtual-list";
 import ListRow from "./list-row";
+
+import { IndexContext } from "root";
+
+import { classNamesGenerator, deepFreeze, getReadableSize, isNotNullArray } from "utils/c";
+import styles from "./index.module.scss";
+
+
 
 /** @typedef {import("root/data-adapter.js").TTreeItem} TTreeItem */
 
@@ -36,8 +37,8 @@ const DEF_ROW_HEIGHT = 35;
  */
 
 export default function ListBody() {
-    // const { currFolder } = useContext(DataContext);
-    const currFolder = {};
+    const { currFolder, action } = useContext(IndexContext);
+    //  const currFolder = {};
     /** @type {TListBodyState} */
     // const state = hookGetState({ currFile: null, selectedFile: [] });
 
@@ -56,10 +57,14 @@ export default function ListBody() {
         list: {
             className: styles.list,
             rowHeight: DEF_ROW_HEIGHT,
+            rowCount: currFolder?.children?.length || 0,
             data: currFolder?.children || null,
             component: {
                 outer: "article",
-                inner: "ol"
+                inner: "ol",
+                empty() {
+                    return <div className="empty_list_item">无数据</div>
+                }
             },
             setRowKey(idx) {
                 return currFolder?.children?.[idx]?.path || idx;
@@ -104,6 +109,13 @@ export default function ListBody() {
     //     }, []);
     //     return <div className={styles.list}>{list}</div>;
     // }
+    function listRender({ index, scrolling, resizing }) {
+        const attr = {
+            item: currFolder?.children?.[index] || null,
+            disabled: scrolling || resizing
+        };
+        return <ListRow {...attr} />;
+    }
     return <div className={styles.body} ref={refs.$}>
         <HorizontalResizeParent {...attr.resize}>
             <span className={`${styles.header_item} idx`}>#</span>
@@ -112,16 +124,7 @@ export default function ListBody() {
         </HorizontalResizeParent>
         {/* {listRender()} */}
         <VirtualList {...attr.list}>
-            {function render(props) {
-                const attr = { data: currFolder?.children?.[props.index] || null, ...props };
-                return <ListRow {...attr} />;
-                // const item = currFolder?.children?.[index] || null;
-                // return item && <li className={classNamesGenerator(styles.list_row, scrolling && "SCROLLING")}>
-                //     <div className={`${styles.list_item} idx`}>{index + 1}</div>
-                //     <div className={`${styles.list_item} name`}>{item.name}</div>
-                //     <div className={`${styles.list_item} size`}>{getReadableSize(item.size)}</div>
-                // </li>
-            }}
+            {listRender}
         </VirtualList>
     </div>
 }

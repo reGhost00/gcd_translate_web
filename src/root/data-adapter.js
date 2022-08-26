@@ -295,6 +295,7 @@ const MULTI_CALL_TIMEOUT = MathEx.normalDistributionWithRangeSample(300, 30, 50)
  * @typedef TTreeItem
  * @property {number} $idx 原始索引
  * @property {TTreeItem} $parent 父级
+ * @property {number} $subFileLength 子文件数
  * @property {string} name 文件名
  * @property {string} path 文件路径
  * @property {number} size 文件大小
@@ -395,14 +396,16 @@ export default function withNetworkAdapter(Com) {
                         this.setState({ list: true, tree: true });
                     }
                     rev.kvs.length += len;
-                    rev.kvs[path] = Object.assign(rev.kvs[path] || { $idx: 0, $parent, name: path }, { path, children: arr });
-                    for (let $idx=0; $idx<len; $idx++) {
-                        kvs[arr[$idx].path] = Object.assign(arr[$idx], { $idx, $parent: rev.kvs[path] });
+                    rev.kvs[path] = Object.assign(rev.kvs[path] || { $idx: 0, $parent, $subFileLength: 0, name: path }, { path, children: arr });
+                    for (let $idx = 0; $idx < len; $idx++) {
+                        kvs[arr[$idx].path] = Object.assign(arr[$idx], { $idx, $parent: rev.kvs[path], $subFileLength: 0 });
                         if (!arr[$idx].size) {
                             const sub = await getFileTree.call(this, arr[$idx].path, kvs, arr[$idx]);
                             arr[$idx].children = sub.arr || null;
                             rev.kvs = Object.assign(kvs, sub.kvs);
                         }
+                        else
+                            rev.kvs[path].$subFileLength += 1;
                     }
                 }
                 return rev;

@@ -9,19 +9,20 @@ $resize_toggle_width: 3px;
 $resize_toggle_bgc: darken($tree_bgc, 3%);
 $resize_toggle_bgc_hover: darken($resize_toggle_bgc, 3%);
 $resize_toggle_bgc_active: #559;
-
+// 子项
 $sub_header_height: 42px;
 $sub_body_height: calc($body_height - $sub_header_height);
 $sub_item_height: 35px;
 
+$sub_action_wh: 1.5em;
+$sub_action_bdrs: 2px;
+// 通用图标
 $icon_fsz: 16px;
 $icon_color: #aaa;
 $icon_hover_color: #88c;
 $icon_hover_bgc: #ddd;
 
-$headerMenu_icon_wh: 2em;
-
-$itemAction_icon_wh: 1.5em;
+// $headerMenu_icon_wh: 2em;
 
 $row_hover_bgc: #ddf;
 $row_active_bgc: darken($row_hover_bgc, 3%);

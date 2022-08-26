@@ -22,29 +22,33 @@ const DEF_FILE_ICON = Object.freeze({
 /** @typedef {import("root/data-adapter.js").TTreeItem} TTreeItem */
 /**
  * @typedef TListRowArgs
- * @property {TTreeItem} data
- * @property {boolean} scrolling
+ * @property {TTreeItem} item 行数据
+ * @property {boolean} disabled 滚动或缩放过程中
  */
 /**
  * @param {TListRowArgs}
  */
-export default function ListRow({ index, data, scrolling }) {
-    if (scrolling) {
+export default function ListRow({ item, disabled }) {
+    if (item?.path && item.size) {
+        const fileSuffix = item.name.split('.').pop().toLowerCase();
+        if (disabled) {
+            return <li className={`${styles.list_row} disabled`}>
+                <span className={styles.list_item_idx}>{item.$idx * 1 + 1}</span>
+                <div className={styles.list_item_name}>
+                    <Icon className="icon" name={DEF_FILE_ICON[fileSuffix] || "#file"} />
+                    <span className="name">{item.name}</span>
+                </div>
+                <span className={styles.list_item_size}>{getReadableSize(item.size)}</span>
+            </li>
+        }
         return <li className={styles.list_row}>
-            <div className={`${styles.list_item} idx`}>{index + 1}</div>
-            <div className={`${styles.list_item} name`}>{data.name}</div>
-            <div className={`${styles.list_item} size`}>{getReadableSize(data.size)}</div>
+            <div className={styles.list_item_idx}>{item.$idx * 1 + 1}</div>
+            <div className={styles.list_item_name}>
+                <Icon className="icon" name={DEF_FILE_ICON[fileSuffix] || "#file"} />
+                <span className="name">{item.name}</span>
+            </div>
+            <div className={styles.list_item_size}>{getReadableSize(item.size)}</div>
         </li>
     }
-    const fileSuffix = data.name.split('.').pop().toLowerCase();
-    return <li className={styles.list_row}>
-        <div className={`${styles.list_item} idx`}>
-            <span>{index + 1}</span>
-        </div>
-        <div className={`${styles.list_item} name`}>
-            <Icon name={DEF_FILE_ICON[fileSuffix] || "#file"} />
-            <span>{data.name}</span>
-        </div>
-        <div className={`${styles.list_item} size`}>{getReadableSize(data.size)}</div>
-    </li>
+    return null;
 }

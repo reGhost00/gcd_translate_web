@@ -1,13 +1,66 @@
-@import "../def";
+@import "../../def";
 
-$treeItem_height: $sub_item_height;
 $treeItem_padding:0 0 0 calc(15px * var(--level) + 10px);
-
-$treeItem_title_padding: 0 10px;
 
 $treeItem_hover_bgc: darken($tree_bgc, 3%);
 $treeItem_active_bgc: lighten($tree_bgc, 3%);
 $treeItem_active_hover_bgc: $row_hover_bgc;
+
+$treeItem_title_padding: 0 10px;
+
+.treeItem,
+.treeItem_container {
+    position: relative;
+}
+
+.treeItem {
+    padding: $treeItem_padding;
+    &:hover {
+        background-color: $treeItem_hover_bgc;
+    }
+    &:global(.active) {
+        background-color: $treeItem_active_bgc;
+        &:hover {
+            background-color: $treeItem_active_hover_bgc;
+        }
+        .treeItem_icon:global(.open) {
+            display: inline-flex;
+        }
+        .treeItem_icon:global(.close) {
+            display: none;
+        }
+    }
+    &:global(.disabled) {
+        pointer-events: none;
+    }
+}
+
+.treeItem_container {
+    @include aic;
+    height: $sub_item_height;
+}
+
+.treeItem_icon {
+    flex: none;
+    color: $tree_icon_color;
+    font-size: $icon_fsz;
+    &:global(.open) {
+        display: none;
+    }
+}
+
+
+.treeItem_title {
+    // @include ovf;
+    flex: auto;
+    padding: $treeItem_title_padding;
+}
+$treeItem_height: $sub_item_height;
+// $treeItem_padding:0 0 0 calc(15px * var(--level) + 10px);
+
+$treeItem_title_padding: 0 10px;
+
+
 
 $treeItem_editing_bgc: #fffc;
 $treeItem_editing_input_margin: 0 0 0 5px;
@@ -23,45 +76,6 @@ $actionGroup_hover_bgc: lighten($treeItem_hover_bgc, 5%);
     }
 }
 
-.treeItem_inner {
-    @include aic;
-    height: $sub_item_height;
-    position: relative;
-    &:hover {
-        .actionGroup {
-            @include aic;
-        }
-        // :global(.title) {
-        //     @include ovf;
-        //     width: calc(var(--treeWidth) - var(--treeItem_paddingLeft, 0) - 136px);
-        // }
-    }
-
-}
-// 按钮组
-.actionGroup {
-    flex: none;
-    display: none;
-}
-
-.actionGroup_icon {
-    @include wh($sub_action_wh);
-    border: 0;
-    border-radius: $sub_action_bdrs;
-    background-color: transparent;
-    &:hover {
-        @include cc($tree_icon_hover_color, $actionGroup_hover_bgc);
-    }
-    &:global(.delete:hover),
-    &:global(.cancel:hover) {
-        @include cc(#fee, #c33);
-    }
-    &:global(.submit:hover) {
-        @include cc(#eef, #33f);
-    }
-}
-
-//@at-root//
 .treeItem_item,
 .treeItem_item_title {
     @include ovf;
@@ -154,7 +168,7 @@ $actionGroup_hover_bgc: lighten($treeItem_hover_bgc, 5%);
 }
 
 .actionGroup_icon {
-    @include wh(24px);
+    @include wh(1.5em);
     border: 0;
     border-radius: 2px;
     background-color: transparent;

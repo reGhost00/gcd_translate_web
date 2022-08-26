@@ -2,9 +2,10 @@
 
 $treeHeader_bgc: darken($tree_bgc, 5%);
 
-$tree_header_icon_color: darken($tree_icon_color, 3%);
-$tree_header_icon_hover_color: darken($tree_icon_hover_color, 3%);
-$tree_header_icon_hover_bgc: darken($tree_icon_hover_bgc, 3%);
+$treeHeader_icon_wh: 2em;
+$treeHeader_icon_color: darken($tree_icon_color, 3%);
+$treeHeader_icon_hover_color: darken($tree_icon_hover_color, 3%);
+$treeHeader_icon_hover_bgc: darken($tree_icon_hover_bgc, 3%);
 
 .header {
     @include aic;
@@ -14,11 +15,11 @@ $tree_header_icon_hover_bgc: darken($tree_icon_hover_bgc, 3%);
 
 .headerMenu_icon {
     @include mp;
-    @include wh($headerMenu_icon_wh);
-    @include cc($tree_header_icon_color, transparent);
+    @include wh($treeHeader_icon_wh);
+    @include cc($treeHeader_icon_color, transparent);
     border: 0;
     font-size: $icon_fsz;
     &:hover {
-        @include cc($tree_header_icon_hover_color, $tree_header_icon_hover_bgc);
+        @include cc($treeHeader_icon_hover_color, $treeHeader_icon_hover_bgc);
     }
 }
