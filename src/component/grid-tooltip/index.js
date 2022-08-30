@@ -120,14 +120,56 @@ function hofGetResizeTarget(fn) {
     }
 }
 
-function positionVisibleGuarantee(target) {
+/**
+ * 设置 popupContainer 的
+ * @param {TTooltipWithGridWrapArgsPlacement} placement
+ * @param {HTMLElement} target
+ */
+function positionVisibleGuarantee(placement, target) {
     if (target instanceof HTMLElement) {
         const rect = target.getBoundingClientRect();
-        console.log('p', rect, target.style.cssText);
+        const { clientHeight, clientWidth } = document.body;
+        if ((rect.height * rect.width || Number.POSITIVE_INFINITY) < clientHeight * clientWidth) {
+            if (rect.left < 0 || rect.top < 0) {
+                target.style.cssText = `left: ${rect.left < 0 ? 0 : target.style.left}; top: ${rect.top < 0 ? 0 : target.style.top};`;
+            }
+            else if (rect.right > clientWidth || rect.bottom > clientHeight)
+                target.style.cssText = ``;
+            // if ((target.style.cssText.includes("left") || target.style.cssText.includes("top")) && rect.left * rect.top < 0)
+
+            // else if ((target.style.cssText.includes("right") || target.style.cssText.includes("bottom")) && rect.right * rect.bottom < 0)
+            //     cssText += "top: 0; ";
+            // if (target.style.cssText.includes("right") && rect.right > clientWidth)
+            //     cssText += "right: 0; ";
+            // if (target.style.cssText.includes("bottom") && rect.bottom > clientHeight)
+            //     cssText += "bottom: 0; ";
+            // if (cssText)
+            //     target.style.cssText = cssText;
+        }
     }
 }
 
-
+/**
+ * 设置弹层 placement
+ * @param {TTooltipWithGridWrapArgsPlacement} placement
+ */
+function getPlacementAttr(placement) {
+    const placementStyleKVs = {
+        topLeft: { style: { bottom: "100%", left: 0 },  },
+        top: { style: { bottom: "100%", left: "50%", transform: "translateX(-50%)" },  },
+        topRight: { style: { bottom: "100%", right: 0 },  },
+        rightTop: { style: { left: "100%", top: 0 },  },
+        right: { style: { left: "100%", top: "50%", transform: "translateY(-50%)" },  },
+        rightBottom: { style: { left: "100%", bottom: 0 },  },
+        bottomRight: { style: { top: "100%", right: 0 },  },
+        bottom: { style: { top: "100%", left: "50%", transform: "translateX(-50%)" },  },
+        bottomLeft: { style: { top: "100%", left: 0 },  },
+        leftBottom: { style: { right: "100%", bottom: 0 },  },
+        left: { style: { right: "100%", top: "50%", transform: "translateY(-50%)" },  },
+        leftTop: { style: { right: "100%", top: 0 },  },
+    };
+    return (placement && placementStyleKVs[placement]) || placementStyleKVs.top;
+}
 /**
  * @typedef {"auto"|"topLeft"|"top"|"topRight"|"rightTop"|"right"|"rightBottom"|"bottomRight"|"bottom"|"bottomLeft"|"leftBottom"|"left"|"leftTop"} TTooltipWithGridWrapArgsPlacement 可用弹层位置
  */
@@ -136,7 +178,7 @@ function positionVisibleGuarantee(target) {
  * @typedef TTooltipWithGridWrapArgs<T>
  * @property {string | TGridWrapOptsClassName} className 自定义样式
  * @property {string | TGridWrapOptsNodeName} nodeName 自定义节点
- * @property {HTMLElement} [popupContainer] 弹层容器
+ * @property {boolean} [fixed] 固定定位
  * @property {TTooltipWithGridWrapArgsPlacement} [placement] 弹层位置
  * @property {"horizontal"|"vertical"} [direction] 表格方向
  * @property {TRenderGridArgsConfig<T>} config { 项: 标题 }
@@ -149,44 +191,81 @@ function positionVisibleGuarantee(target) {
  */
 export default function TooltipWithGridWrap(props) {
     const refs = {
+        /** @type {React.MutableRefObject<HTMLElement>} */
         $wrap: useRef(null),
+        /** @type {React.MutableRefObject<HTMLElement>} */
         $container: useRef(null),
+        /** @type {React.MutableRefObject<ResizeObserver>} */
         ob: useRef(null),
+        // wrapStyle: useRef({}),
+        /** @type {React.MutableRefObject<DOMRect>} */
+        containerRect: useRef({})
     };
-    /**
-     * 设置弹层 placement
-     * @param {TTooltipWithGridWrapArgsPlacement} placement
-     */
-    function getPlacementAttr(placement) {
-        const placementStyleKVs = {
-            topLeft: { style: { bottom: "100%", left: 0 },  },
-            top: { style: { bottom: "100%", left: "50%", transform: "translateX(-50%)" },  },
-            topRight: { style: { bottom: "100%", right: 0 },  },
-            rightTop: { style: { left: "100%", top: 0 },  },
-            right: { style: { left: "100%", top: "50%", transform: "translateY(-50%)" },  },
-            rightBottom: { style: { left: "100%", bottom: 0 },  },
-            bottomRight: { style: { top: "100%", right: 0 },  },
-            bottom: { style: { top: "100%", left: "50%", transform: "translateX(-50%)" },  },
-            bottomLeft: { style: { top: "100%", left: 0 },  },
-            leftBottom: { style: { right: "100%", bottom: 0 },  },
-            left: { style: { right: "100%", top: "50%", transform: "translateY(-50%)" },  },
-            leftTop: { style: { right: "100%", top: 0 },  },
+    const { className=DEF_WRAP_OPTS.className, nodeName=DEF_WRAP_OPTS.nodeName, fixed=false, config, data, direction="horizontal", placement="top", children=null, ...rest } = props;
+    useEffect(() => {
+        if (fixed && refs.$container.current instanceof HTMLElement) {
+            refs.containerRect.current = refs.$container.current.getBoundingClientRect();
+            // const bottom = Math.max(Math.floor(document.body.clientHeight - refs.containerRect.current.top), 0);
+            // const left = Math.max(Math.floor(refs.containerRect.current.left), 0);
+            // const right = Math.min(document.body.clientWidth, refs.containerRect.current.right);
+            // const placementStyleKVs = {
+            //     topLeft: { bottom, left },
+            //     top: { bottom, "--left": left },
+            //     topRight: { bottom, right },
+            //     rightTop: { style: { left: "100%", top: 0 },  },
+            //     right: { style: { left: "100%", top: "50%", transform: "translateY(-50%)" },  },
+            //     rightBottom: { style: { left: "100%", bottom: 0 },  },
+            //     bottomRight: { style: { top: "100%", right: 0 },  },
+            //     bottom: { style: { top: "100%", left: "50%", transform: "translateX(-50%)" },  },
+            //     bottomLeft: { style: { top: "100%", left: 0 },  },
+            //     leftBottom: { style: { right: "100%", bottom: 0 },  },
+            //     left: { style: { right: "100%", top: "50%", transform: "translateY(-50%)" },  },
+            //     leftTop: { style: { right: "100%", top: 0 },  },
+            // };
+            // const placementStyleAdjustKVs = {
+            //     top(placement) {
+
+            //     }
+            // };
+            // refs.wrapStyle.current = placementStyleKVs[placement] || placementStyleKVs.top;
+        //     if (refs.ob.current instanceof ResizeObserver)
+        //         refs.ob.current.disconnect();
+        //     refs.ob.current = new ResizeObserver(hofGetResizeTarget(placement, positionVisibleGuarantee));
+        //     refs.ob.current.observe(refs.$wrap.current);
+        // }
+        // return () => {
+        //     if (refs.ob.current instanceof ResizeObserver)
+        //         refs.ob.current.disconnect();
+        }
+    }, [refs.$container, fixed]);
+    useEffect(() => {
+        if (fixed && refs.$wrap.current instanceof HTMLElement) {
+            if (refs.ob.current instanceof ResizeObserver)
+                refs.ob.current.disconnect();
+            if (refs.$container.current instanceof HTMLElement && !(refs.containerRect.current.width * refs.containerRect.current.height))
+                refs.containerRect.current = refs.$container.current.getBoundingClientRect();
+            if (refs.containerRect.current.width * refs.containerRect.current.height) {
+                refs.ob.current = new ResizeObserver(function onResize([entry]) {
+                    if (entry.contentRect.width * entry.contentRect.height) {
+                        if ("top" === placement || "bottom" === placement) {
+                            const offset = refs.containerRect.current.width - entry.contentRect.width;
+                            const left = Math.max(Math.round(refs.containerRect.current.left + offset / 2), 0);
+                            const top = "top" === placement
+                                ? Math.max(Math.floor(refs.containerRect.current.top - entry.contentRect.height), 0)
+                                : Math.min(Math.floor(refs.containerRect.current.bottom), document.body.clientHeight - entry.contentRect.height);
+                            entry.target.style.cssText = `display: block; left: ${left}px; top: ${top}px`;
+                        }
+                    }
+                });
+                refs.ob.current.observe(refs.$wrap.current);
+            }
+
+        }
+        return () => {
+            if (refs.ob.current instanceof ResizeObserver)
+                refs.ob.current.disconnect();
         };
-        return (placement && placementStyleKVs[placement]) || placementStyleKVs.top;
-    }
-    const { className=DEF_WRAP_OPTS.className, nodeName=DEF_WRAP_OPTS.nodeName, popupContainer, config, data, direction="horizontal", placement, children=null, ...rest } = props;
-    // useEffect(() => {
-    //     if (refs.$wrap.current instanceof HTMLElement) {
-    //         if (refs.ob.current instanceof ResizeObserver)
-    //             refs.ob.current.disconnect();
-    //         refs.ob.current = new ResizeObserver(hofGetResizeTarget(positionVisibleGuarantee));
-    //         refs.ob.current.observe(refs.$wrap.current);
-    //     }
-    //     return () => {
-    //         if (refs.ob.current instanceof ResizeObserver)
-    //             refs.ob.current.disconnect();
-    //     }
-    // }, [refs.$wrap]);
+    }, [refs.$wrap, fixed]);
     if (config && data) {
         const wrapContainerCSS = className?.wrapContainer || className || DEF_WRAP_OPTS.className.wrapContainer;
         const tooltipContainerCSS = className?.tooltipContainer || DEF_WRAP_OPTS.className.tooltipContainer;
@@ -202,25 +281,32 @@ export default function TooltipWithGridWrap(props) {
             direction: ["horizontal", "vertical"].includes(direction) ? direction : "horizontal"
         };
         const attrWrap = {
-            // ref: refWrap,
-            // ref(tar) {
-            //     if (tar instanceof HTMLElement) {
-            //         const ob = new ResizeObserver(enter => console.log('resize', enter[0].target.getBoundingClientRect() ));
-            //         ob.observe(tar);
-            //     }
-            // },
             ref: refs.$wrap,
             className: `${styles.tooltipWrap_inner} ${attrGrid.direction} ${tooltipContainerCSS}`,
-            ...getPlacementAttr(placement)
+            // style: refs.wrapStyle.current
         };
+        // if (!fixed) {
+        //     attrWrap = Object.assign(attrWrap, getPlacementAttr(placement));
+        // }
         const $grid = renderGrid(config, data, attrGrid);
-        const $tooltip = popupContainer instanceof HTMLElement
-            ? ReactDOM.createPortal(React.createElement(tooltipContainerNodeName, attrWrap, $grid), popupContainer)
-            : React.createElement(tooltipContainerNodeName, attrWrap, $grid)
+        let $tooltip = null;
+        rest.ref = refs.$container;
         rest.className = `${styles.tooltipWrap} ${wrapContainerCSS}`;
-        if (popupContainer instanceof HTMLElement) {
-            
+        if (fixed) {
+            $tooltip = ReactDOM.createPortal(React.createElement(tooltipContainerNodeName, attrWrap, $grid), document.body);
+            rest.onMouseEnter = function onMouseEnter() {
+                if (refs.$wrap.current instanceof HTMLElement) {
+                    refs.$wrap.current.style.cssText = "display: block"; // Object.entries(refs.wrapStyle.current).reduce((prev, [key, val]) => `${prev}${key}: ${val}px; `, "display: block; ");
+                }
+            };
+            rest.onMouseLeave = function onMouseLeave() {
+                if (refs.$wrap.current instanceof HTMLElement)
+                    refs.$wrap.current.removeAttribute("style");
+            };
         }
+        else
+            $tooltip = React.createElement(tooltipContainerNodeName, Object.assign(attrWrap, getPlacementAttr(placement)), $grid);
+
         return React.createElement(wrapContainerNodeName, rest, children, $tooltip);
     }
     return children;

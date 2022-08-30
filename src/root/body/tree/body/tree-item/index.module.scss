@@ -51,7 +51,7 @@ $treeItem_title_padding: 0 10px;
 
 
 .treeItem_title {
-    // @include ovf;
+    @include ovf;
     flex: auto;
     padding: $treeItem_title_padding;
 }

@@ -51,7 +51,7 @@ export default function TreeItem(props) {
         </li>
     }
     const $name = "string" === typeof props.name
-        ? <Tooltip className={`${styles.treeItem_title} ${props.className?.title}`} data={props} config={TOOLTIP_CONFIG}>
+        ? <Tooltip fixed className={`${styles.treeItem_title} ${props.className?.title}`} data={props} config={TOOLTIP_CONFIG}>
             {props.name}
         </Tooltip>
         : props.name;
