@@ -205,37 +205,6 @@ export default function TooltipWithGridWrap(props) {
     useEffect(() => {
         if (fixed && refs.$container.current instanceof HTMLElement) {
             refs.containerRect.current = refs.$container.current.getBoundingClientRect();
-            // const bottom = Math.max(Math.floor(document.body.clientHeight - refs.containerRect.current.top), 0);
-            // const left = Math.max(Math.floor(refs.containerRect.current.left), 0);
-            // const right = Math.min(document.body.clientWidth, refs.containerRect.current.right);
-            // const placementStyleKVs = {
-            //     topLeft: { bottom, left },
-            //     top: { bottom, "--left": left },
-            //     topRight: { bottom, right },
-            //     rightTop: { style: { left: "100%", top: 0 },  },
-            //     right: { style: { left: "100%", top: "50%", transform: "translateY(-50%)" },  },
-            //     rightBottom: { style: { left: "100%", bottom: 0 },  },
-            //     bottomRight: { style: { top: "100%", right: 0 },  },
-            //     bottom: { style: { top: "100%", left: "50%", transform: "translateX(-50%)" },  },
-            //     bottomLeft: { style: { top: "100%", left: 0 },  },
-            //     leftBottom: { style: { right: "100%", bottom: 0 },  },
-            //     left: { style: { right: "100%", top: "50%", transform: "translateY(-50%)" },  },
-            //     leftTop: { style: { right: "100%", top: 0 },  },
-            // };
-            // const placementStyleAdjustKVs = {
-            //     top(placement) {
-
-            //     }
-            // };
-            // refs.wrapStyle.current = placementStyleKVs[placement] || placementStyleKVs.top;
-        //     if (refs.ob.current instanceof ResizeObserver)
-        //         refs.ob.current.disconnect();
-        //     refs.ob.current = new ResizeObserver(hofGetResizeTarget(placement, positionVisibleGuarantee));
-        //     refs.ob.current.observe(refs.$wrap.current);
-        // }
-        // return () => {
-        //     if (refs.ob.current instanceof ResizeObserver)
-        //         refs.ob.current.disconnect();
         }
     }, [refs.$container, fixed]);
     useEffect(() => {
@@ -283,11 +252,7 @@ export default function TooltipWithGridWrap(props) {
         const attrWrap = {
             ref: refs.$wrap,
             className: `${styles.tooltipWrap_inner} ${attrGrid.direction} ${tooltipContainerCSS}`,
-            // style: refs.wrapStyle.current
         };
-        // if (!fixed) {
-        //     attrWrap = Object.assign(attrWrap, getPlacementAttr(placement));
-        // }
         const $grid = renderGrid(config, data, attrGrid);
         let $tooltip = null;
         rest.ref = refs.$container;

@@ -1,5 +1,6 @@
-import { Icon } from "component/icon";
 import React from "react";
+import { Icon } from "component/icon";
+import Tooltip from "component/grid-tooltip";
 import { getReadableSize } from "utils/c";
 import styles from "./index.module.scss";
 
@@ -17,6 +18,12 @@ const DEF_FILE_ICON = Object.freeze({
     cue:    "#file-lines",
     lrc:    "#file-lines",
     iso:    "#compact-disc"
+});
+
+const TOOLTIP_CONFIG = Object.freeze({
+    name: "文件名",
+    path: "路径",
+    size: "大小"
 });
 
 /** @typedef {import("root/data-adapter.js").TTreeItem} TTreeItem */
@@ -43,10 +50,10 @@ export default function ListRow({ item, disabled }) {
         }
         return <li className={styles.list_row}>
             <div className={styles.list_item_idx}>{item.$idx * 1 + 1}</div>
-            <div className={styles.list_item_name}>
+            <Tooltip fixed className={styles.list_item_name} data={item} config={TOOLTIP_CONFIG}>
                 <Icon className="icon" name={DEF_FILE_ICON[fileSuffix] || "#file"} />
                 <span className="name">{item.name}</span>
-            </div>
+            </Tooltip>
             <div className={styles.list_item_size}>{getReadableSize(item.size)}</div>
         </li>
     }
