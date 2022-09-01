@@ -1,7 +1,11 @@
-import React, { useContext, useEffect, useMemo } from "react";
+import React, { useRef, useEffect, useMemo, useState } from "react";
 import { Icon, IconBar } from "component/icon";
 
 import Tooltip from "component/grid-tooltip";
+
+import { hofFormBindValue, hookGetState, hookSetState } from "utils/r";
+import { classNamesGenerator, deepFreeze, hofCallContinue, hofCallWithCondition, hofDOMClassFilter, hofGetDOMValue, isNotNullArray } from "utils/c";
+
 import styles from "./index.module.scss";
 
 const TOOLTIP_CONFIG = Object.freeze({
@@ -9,6 +13,11 @@ const TOOLTIP_CONFIG = Object.freeze({
     path: "路径",
     $subFileLength: "子文件数"
 });
+
+const ITEM_ACTION = Object.freeze([
+    { name: "#check", className: `${styles.actionGroup_icon} submit`, nodeName: "button" },
+    { name: "#xmark", className: `${styles.actionGroup_icon} cancel`, nodeName: "button" }
+]);
 /** @typedef {import("root/data-adapter.js").TTreeItem} TTreeItem */
 /**
  * @typedef TFolderItem
@@ -38,7 +47,7 @@ const TOOLTIP_CONFIG = Object.freeze({
 /**
  * @param {TTreeItemArgs} props
  */
-export default function TreeItem(props) {
+export function TreeItem(props) {
     const treeItemCSS = `${styles.treeItem} ${props.className?.outer || props.className}`;
     const levelStyle = { "--level": props.level };
     if (props.disabled) {
@@ -62,5 +71,39 @@ export default function TreeItem(props) {
             {$name}
             {props.actions}
         </div>
+        {props.children}
     </li>
+}
+
+export function TreeItemCreate(props) {
+    const [value, setValue] = useState("");
+    const ref = useRef(null);
+    const attrInput = {
+        ref,
+        placeholder: "请输入文件夹名",
+        pattern: '[^\\/:*?"<>|]+',
+        value,
+        onChange: hofGetDOMValue(setValue)
+    };
+    const attrActionGroup = {
+        icons: ITEM_ACTION,
+        onClick: hofDOMClassFilter({
+            submit() {
+                if (value) {
+                    if (!/[\\/:*?"<>|]/.test(value)) {
+                        return props.onSubmit(value);
+                    }
+                    alert(`文件名不能包含以下字符\n\\ / : * ? " < > |`);
+                }
+            },
+            cancel: props.onCancel
+        })
+    };
+
+    return <div className={styles.treeItem_create}>
+        <label>
+            <input {...attrInput} />
+            <IconBar {...attrActionGroup}/>
+        </label>
+    </div>;
 }

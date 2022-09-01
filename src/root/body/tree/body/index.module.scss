@@ -23,21 +23,37 @@ $actionGroup_hover_bgc: lighten($treeItem_hover_bgc, 5%);
     }
 }
 
-.treeItem_inner {
+.treeItem_inner,
+.treeItem_create {
     @include aic;
     height: $sub_item_height;
     position: relative;
+}
+
+.treeItem_inner {
     &:hover {
         .actionGroup {
             @include aic;
         }
-        // :global(.title) {
-        //     @include ovf;
-        //     width: calc(var(--treeWidth) - var(--treeItem_paddingLeft, 0) - 136px);
-        // }
     }
-
 }
+//
+// 功能按钮
+.treeItem_create_actionGroup {
+    flex: none;
+}
+
+.treeItem_create {
+    @include mp(0 10px, 0 10px);
+    background-color: #fff;
+    border: 1px solid #999;
+    input {
+        @include hh(2em);
+        border: 0;
+        flex: auto;
+    }
+}
+
 // 按钮组
 .actionGroup {
     flex: none;

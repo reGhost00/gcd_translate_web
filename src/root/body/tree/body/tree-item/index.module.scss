@@ -7,6 +7,11 @@ $treeItem_active_bgc: lighten($tree_bgc, 3%);
 $treeItem_active_hover_bgc: $row_hover_bgc;
 
 $treeItem_title_padding: 0 10px;
+//
+// 编辑/新建
+$treeItem_editing_padding: $treeItem_title_padding;
+$treeItem_editing_border: 1px solid #999;
+$treeItem_editing_input_padding: 0 5px;
 
 .treeItem,
 .treeItem_container {
@@ -49,12 +54,33 @@ $treeItem_title_padding: 0 10px;
     }
 }
 
-
 .treeItem_title {
     @include ovf;
     flex: auto;
     padding: $treeItem_title_padding;
 }
+//
+// 创建 & 重命名
+.treeItem_create {
+    height: $sub_item_height;
+    padding: $treeItem_editing_padding;
+    label {
+        height: 2em;
+        display: flex;
+        border: $treeItem_editing_border;
+        background-color: #fff;
+    }
+    input {
+        @include mp(0, $treeItem_editing_input_padding);
+        border: 0;
+        flex: auto;
+        &:invalid {
+            color: #900;
+        }
+    }
+}
+
+
 $treeItem_height: $sub_item_height;
 // $treeItem_padding:0 0 0 calc(15px * var(--level) + 10px);
 
