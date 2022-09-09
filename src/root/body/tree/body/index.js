@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import { Icon, IconBar } from "component/icon";
-import { TreeItem, TreeItemCreate } from "./tree-item";
+import { TreeItem } from "./tree-item";
 import InputWithMessage from "component/input-with-message";
 import { VirtualList } from "component/virtual-list";
 
@@ -64,40 +64,6 @@ const ITEM_ACTION = deepFreeze({
 });
 
 const ITEM_HEIGHT = 35;
-
-// function TreeItemCreate(props) {
-//     const state = hookGetState({ value: '', message: '' });
-//     const attrInput = {
-//         message: state.message,
-//         type: "text",
-//         placeholder: "请输入新文件夹名",
-//         containerClassName: styles.treeItem_item_create,
-//         ...hofFormBindValue({ state, key: "value" }),
-//         onSubmit() {
-//             if (state.value) {
-//                 if (!/[\\/:*?"<>|]/.test(state.value))
-//                     props.onSubmit(state.value);
-//                 else
-//                     state.message = `文件名不能包含下列任何字符\n\\ / : * ? " < > |`;
-//             }
-//             else
-//                 props.onCancel();
-//         }
-//     };
-//     const attrActionGroup = {
-//         icons: ITEM_ACTION.editingAction,
-//         // className: styles.treeItem_create_actionGroup,
-//         onClick: hofDOMClassFilter({
-//             submit: attrInput.onSubmit,
-//             cancel: props.onCancel
-//         })
-//     };
-
-//     return <label className={styles.treeItem_create}>
-//         <input />
-//         <IconBar {...attrActionGroup}/>
-//     </label>;
-// }
 
 /**
  * @typedef TTreeBodyState
@@ -190,24 +156,7 @@ export default function TreeBody() {
         };
         return <IconBar {...attr} />
     }
-    function getFolderRename(folder) {
-        if (state.editing === folder.path) {
-            const attr = {
-                value: state.folderName,
-                onChange(folderName) {
-                    setState({ folderName, editing: folder.path, create: null });
-                },
-                onSubmit() {
-                    console.log('create submit');
-                },
-                onCancel() {
-                    setState({ editing: null, create: null, folderName: "" });
-                }
-            };
-            return <TreeItemCreate {...attr} />;
-        }
-        return folder.name;
-    }
+
     function treeItemRender({ index, scrolling, resizing }) {
         const folder = folders[index] || null;
         if (folder?.path && !folder.size) {
