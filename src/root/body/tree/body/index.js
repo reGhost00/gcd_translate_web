@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import { Icon, IconBar } from "component/icon";
 import { TreeItem, TreeItemCreate } from "./tree-item";
 import InputWithMessage from "component/input-with-message";
@@ -103,6 +103,7 @@ const ITEM_HEIGHT = 35;
  * @typedef TTreeBodyState
  * @property {string} editing 当前编辑路径
  * @property {string} create 当前新建路径
+ * @property {string} folderName 新文件夹名
  */
 /**
  * @typedef TTreeBodyFolder
@@ -115,8 +116,8 @@ const ITEM_HEIGHT = 35;
 export default function TreeBody() {
     const { data, loading } = useContext(NetworkAdapterContext);
     const { currFolder, action } = useContext(IndexContext);
-    /** @type {TTreeBodyState} */
-    const state = hookGetState({ editing: null, create: null, folderName: null });
+    /** @type {[TTreeBodyState, React.Dispatch<React.SetStateAction<TTreeBodyState>>]} */
+    const [state, setState] = useState({ editing: null, create: null, folderName: "" });
     /** @type {TTreeBodyFolder[]} 文件夹 */
     const folders = useMemo(() => {
         // let allPath = Object.values(data.kvs);
@@ -155,6 +156,10 @@ export default function TreeBody() {
             return folders[idx]?.path || idx;
         }
     };
+    function setCurrFolder(folder) {
+        const target = data.kvs?.[folder.path] || null;
+        return target && action.setCurrFolder(target);
+    }
     /**
      * 设置按钮组回调
      * @param {TTreeBodyFolder} folder
@@ -165,10 +170,12 @@ export default function TreeBody() {
             className: styles.actionGroup,
             onClick: hofDOMClassFilter({
                 rename() {
-                    hookSetState(state, { create: null, editing: folder.path });
+                    setState({ create: null, editing: folder.path, folderName: folder.name });
+                    setCurrFolder(folder);
                 },
                 create() {
-                    hookSetState(state, { create: folder.path, editing: null });
+                    setState({ create: folder.path, editing: null, folderName: "" });
+                    setCurrFolder(folder);
                 },
                 move(tar) {
                     console.log('move', tar)
@@ -183,6 +190,24 @@ export default function TreeBody() {
         };
         return <IconBar {...attr} />
     }
+    function getFolderRename(folder) {
+        if (state.editing === folder.path) {
+            const attr = {
+                value: state.folderName,
+                onChange(folderName) {
+                    setState({ folderName, editing: folder.path, create: null });
+                },
+                onSubmit() {
+                    console.log('create submit');
+                },
+                onCancel() {
+                    setState({ editing: null, create: null, folderName: "" });
+                }
+            };
+            return <TreeItemCreate {...attr} />;
+        }
+        return folder.name;
+    }
     function treeItemRender({ index, scrolling, resizing }) {
         const folder = folders[index] || null;
         if (folder?.path && !folder.size) {
@@ -195,37 +220,34 @@ export default function TreeBody() {
                 };
                 return <TreeItem {...attr} />;
             }
+
             const attr = {
-                item: {
-                    ...folder,
-                    className: {
-                        outer: activeCSS,
-                        inner: styles.treeItem_inner,
-                        title: "title",
-                        [Symbol.toPrimitive]() {
-                            return "";
-                        }
-                    },
-                    actions: getItemActions(folder),
-                    onClick() {
-                        const target = data.kvs?.[folder.path] || null;
-                        return target && action.setCurrFolder(target);
+                ...folder,
+                className: {
+                    outer: activeCSS,
+                    inner: styles.treeItem_inner,
+                    title: "title",
+                    [Symbol.toPrimitive]() {
+                        return "";
                     }
                 },
-                create: state.create && {
-                    onSubmit(v) {
-                        console.log('submit', v)
-                        hookSetState(state, { editing: null, create: null });
-                    },
-                    onCancel() {
-                        hookSetState(state, { editing: null, create: null });
-                        console.log('cancel')
-                    }
+                creating: state.create === folder.path,
+                editing: state.editing === folder.path,
+                actions: getItemActions(folder),
+                onClick() {
+                    setCurrFolder(folder);
+                },
+                onSubmit(val) {
+                    console.log("submit", val);
+                },
+                onCancel() {
+                    setState({ editing: null, create: null });
                 }
             };
-            return <TreeItem {...attr.item} >
-                {state.create === folder.path && <TreeItemCreate {...attr.create} />}
-            </TreeItem>;
+            return <TreeItem {...attr} />;
+            // return <TreeItem {...attr.item} >
+            //     {state.create === folder.path && <TreeItem {...attr.create} />}
+            // </TreeItem>;
         }
         return null;
     }

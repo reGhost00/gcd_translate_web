@@ -9,9 +9,11 @@ $treeItem_active_hover_bgc: $row_hover_bgc;
 $treeItem_title_padding: 0 10px;
 //
 // 编辑/新建
-$treeItem_editing_padding: $treeItem_title_padding;
-$treeItem_editing_border: 1px solid #999;
-$treeItem_editing_input_padding: 0 5px;
+$formItemAction_padding: $treeItem_title_padding;
+
+$formItemAction_label_height: 2em;
+$formItemAction_label_border: 1px solid #aaa;
+$formItemAction_label_padding: 0 5px;
 
 .treeItem,
 .treeItem_container {
@@ -40,6 +42,7 @@ $treeItem_editing_input_padding: 0 5px;
     }
 }
 
+.formItemAction,
 .treeItem_container {
     @include aic;
     height: $sub_item_height;
@@ -59,19 +62,41 @@ $treeItem_editing_input_padding: 0 5px;
     flex: auto;
     padding: $treeItem_title_padding;
 }
+
 //
 // 创建 & 重命名
-.treeItem_create {
-    height: $sub_item_height;
-    padding: $treeItem_editing_padding;
+.formItemAction {
+    flex: auto;
+    padding: $formItemAction_padding;
     label {
-        height: 2em;
+        padding: $formItemAction_label_padding;
+        flex: auto;
+        height: $formItemAction_label_height;
         display: flex;
-        border: $treeItem_editing_border;
+        border: $formItemAction_label_border;
         background-color: #fff;
     }
     input {
-        @include mp(0, $treeItem_editing_input_padding);
+        @include mp(0);
+        border: 0;
+        flex: auto;
+        &:invalid {
+            color: #900;
+        }
+    }
+}
+
+.treeItem_create {
+    height: $sub_item_height;
+    // padding: $treeItem_editing_padding;
+    label {
+        height: 2em;
+        display: flex;
+        // border: $treeItem_editing_border;
+        background-color: #fff;
+    }
+    input {
+        // @include mp(0, $treeItem_editing_input_padding);
         border: 0;
         flex: auto;
         &:invalid {
