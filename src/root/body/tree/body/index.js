@@ -80,7 +80,7 @@ const ITEM_HEIGHT = 35;
  */
 
 export default function TreeBody() {
-    const { data, loading } = useContext(NetworkAdapterContext);
+    const { data, loading, action: ctxAction } = useContext(NetworkAdapterContext);
     const { currFolder, action } = useContext(IndexContext);
     /** @type {[TTreeBodyState, React.Dispatch<React.SetStateAction<TTreeBodyState>>]} */
     const [state, setState] = useState({ editing: null, create: null, folderName: "" });
@@ -187,7 +187,10 @@ export default function TreeBody() {
                     setCurrFolder(folder);
                 },
                 onSubmit(val) {
-                    console.log("submit", val);
+                    const parent = folder.path.split("/").slice(0, -2).join("/");
+                    const newPath = `${parent}/${val}/`;
+                    ctxAction.movePath(folder.path, newPath);
+                    console.log("submit fffff", val);
                 },
                 onCancel() {
                     setState({ editing: null, create: null });

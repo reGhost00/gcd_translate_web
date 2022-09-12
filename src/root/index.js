@@ -17,7 +17,7 @@ import withDataAdapter from "./data-adapter";
 /** @type {React.Context<TIndexContext>} */
 export const IndexContext = React.createContext({ currFolder: null });
 
-export default withDataAdapter(function Root({ value: ctx }) {
+export default withDataAdapter(function Root({ ctx }) {
     const [state, setState] = useState({ currFolder: null });
     const value = {
         currFolder: state.currFolder,

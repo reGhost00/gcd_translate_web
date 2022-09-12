@@ -3,6 +3,9 @@ import { message } from "component/dias";
 import { noThrowWrap, isNotNullArray, xhr, getFixArray, functionBindThisObject, MathEx } from "utils/c";
 import { hookGetState, hookSetState } from "utils/r";
 
+/**
+ * @typedef {ReturnType<getFixArray<number>>} TFixArray 调用时间统计
+ */
 // /**
 //  * @template T
 //  * @typedef {React.FC<T> | React.ComponentClass<T>} TReactComponent React组件
@@ -150,7 +153,6 @@ import { hookGetState, hookSetState } from "utils/r";
 //         console.log('getFiles', fileTree, fileNodes)
 //     };
 // };
-
 // /**
 //  * gcd 返回文件列表项
 //  * @typedef TGCDFileItem
@@ -166,17 +168,47 @@ import { hookGetState, hookSetState } from "utils/r";
 //  * @property {number} size 文件大小
 //  * @property {TTreeItem[]} children 子目录
 //  */
+
+/**
+ * 获取指定路径文件列表
+ * @callback FGetFileList
+ * @param {string} [path] 路径 默认根
+ * @return {Promise<TGCDFileItem[]>}
+ */
+/**
+ * 修改或移动路径
+ * @callback FMovePath
+ * @param {string} oldPath 原路径
+ * @param {string} newPath 新路径
+ * @return {Promise<boolean>}
+ */
+/**
+ * @typedef TNetwork
+ * @property {FGetFileList} getFileList
+ * @property {FMovePath} movePath
+ */
+/** @type {TNetwork} */
 const network = {
-    /** 获取文件列表
-     * @param {string} path 路径
-     * @returns {TGCDFileItem[]}
-     */
     async getFileList(path="/") {
         /** @type {[null | Error, TGCDFileItem[]]} */
         const [err, rev] = await noThrowWrap(xhr(`/list?path=${path}`));
         if (err)
             message.error(`请求列表失败 ${err}`);
         return rev || null;
+    },
+    async movePath(oldPath, newPath) {
+        if ("string" === typeof oldPath && "string" === typeof newPath && oldPath && newPath && oldPath !== newPath) {
+            const body = new URLSearchParams({ oldPath, newPath }).toString();
+            const header = {
+                "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+                "Content-Length": body.length
+            };
+            const opt = { method: "POST", header, body };
+            const [err, rev] = await noThrowWrap(xhr(`/move`, opt));
+            if (err)
+                message.error(`移动失败 ${err}`);
+            return rev || null;
+        }
     }
 };
 
@@ -320,6 +352,27 @@ export const NetworkAdapterContext = React.createContext({
 });
 
 
+/**
+ * 根组件静态数据
+ * @typedef TNetworkAdapterData
+ * @property {AbortController} ab
+ * @property {EventTarget} ev
+ * @property {Record<keyof TDataAdapterState, number>} ct 调用计数
+ * @property {TFixArray} ss 调用时间统计
+ * @property {TDataAdapterFileItem} fileTree 树数据
+ */
+/**
+ * 根
+ */
+/**
+ * @typedef TComponentIndexArgs 根组件
+ * @property {TNetworkAdapterContext} ctx
+ */
+/**
+ * 根组件数据层
+ * @param {React.FC<TComponentIndexArgs>} Com
+ */
+
 export default function withNetworkAdapter(Com) {
     function fixArrayHelper(keys) {
         if (isNotNullArray(keys)) {
@@ -333,14 +386,12 @@ export default function withNetworkAdapter(Com) {
     }
 
     return class NetworkAdapterWrap extends React.Component {
+        /** @type {TNetworkAdapterData} */
         data = {
             ab: new AbortController(),
             ev: new EventTarget(),
-            /** 调用次数 */
             ct: { list: 0, tree: 0 },
-            /** 调用时间 */
             ss: fixArrayHelper(["list", "tree"]),
-            /** @type {TDataAdapterFileItem} */
             fileTree: { arr: null, kvs: null }
         }
         func = {
@@ -419,6 +470,9 @@ export default function withNetworkAdapter(Com) {
                     this.data.fileTree.kvs = Object.assign(this.data.fileTree.kvs || { length: res.arr.length }, res.kvs);
                 }
                 this.setState({ list: false, tree: false });
+            },
+            movePath(oldPath, newPath) {
+                return network.movePath(oldPath, newPath);
             }
         }
         constructor(props) {
@@ -433,11 +487,14 @@ export default function withNetworkAdapter(Com) {
             this.effect.getFileTree("/").then(rev => this.effect.fileTreeReceiver("/", rev));
         }
         render() {
-            const value = {
+            const ctx = {
                 loading: this.state,
-                data: this.data.fileTree
+                data: this.data.fileTree,
+                action: {
+                    movePath: this.effect.movePath
+                }
             };
-            return React.createElement(NetworkAdapterContext.Provider, { value }, React.createElement(Com, { ...this.props, value }));
+            return React.createElement(NetworkAdapterContext.Provider, { value: ctx }, React.createElement(Com, { ...this.props, ctx }));
         }
     }
 }
